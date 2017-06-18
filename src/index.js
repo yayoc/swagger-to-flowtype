@@ -47,7 +47,7 @@ export class FlowTypeGenerator {
 
   definitions(): string {
     const { definitions } = this.swagger;
-    Object.keys(definitions).forEach((k, i) => {
+    Object.keys(definitions).forEach((k) => {
       const headLine = this.withExport ? `export type ${k} = ` : `type ${k} = `;
       this.appendResult(headLine);
       this.determineTypes(k, definitions, true);
@@ -64,7 +64,7 @@ export class FlowTypeGenerator {
     const property = properties[key];
     if ("$ref" in property) {
       this.appendResult(
-        `${key}: ${FlowTypeGenerator.definitionType(property["$ref"])}`
+        `${key}: ${FlowTypeGenerator.definitionType(property.$ref)}`
       );
       if (FlowTypeGenerator.hasNext(key, properties)) {
         this.appendResult(",");
@@ -84,7 +84,7 @@ export class FlowTypeGenerator {
           this.appendResult(`${key}: `);
         }
         this.appendResult("{");
-        Object.keys(property.properties).forEach(k => {
+        Object.keys(property.properties).forEach((k) => {
           this.determineTypes(k, property.properties);
         });
         this.appendResult("}");
@@ -101,7 +101,7 @@ export class FlowTypeGenerator {
 
     if (property.type === "array") {
       const type: * = "$ref" in property.items
-        ? FlowTypeGenerator.definitionType(property.items["$ref"])
+        ? FlowTypeGenerator.definitionType(property.items.$ref)
         : property.items.type;
       const typeString = `Array<${type}>`;
       this.appendResult(`${key}: ${typeString}`);
@@ -113,28 +113,26 @@ export class FlowTypeGenerator {
 }
 
 export const generator = (file: string) => {
-  var doc = yaml.safeLoad(fs.readFileSync(file, "utf8"));
+  const doc = yaml.safeLoad(fs.readFileSync(file, "utf8"));
   const g = new FlowTypeGenerator(doc);
   const options = {};
   return prettier.format(g.definitions(), options);
 };
 
 export const writeToFile = (dist: string = "./flowtype.js", result: string) => {
-  fs.writeFile(dist, result, function(err) {
+  fs.writeFile(dist, result, (err) => {
     if (err) {
       throw err;
     }
   });
 };
 
-export const distFile = (program: Object) => {
-  return program.distination || "./flowtype.js";
-};
+export const distFile = (p: Object) => p.distination || "./flowtype.js";
 
 program
   .arguments("<file>")
   .option("-d --distination <distination>", "Distination path")
-  .action(function(file) {
+  .action((file) => {
     try {
       const result = generator(file);
       const dist = distFile(program);
