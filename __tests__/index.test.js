@@ -77,4 +77,11 @@ describe("generate flow types", () => {
     const expectedString = fs.readFileSync(expected, "utf8");
     expect(generator(file)).toEqual(expectedString);
   });
+
+  it("should generate expected flow types from swagger.json", () => {
+    const file = path.join(__dirname, "__mocks__/swagger.json");
+    const expected = path.join(__dirname, "__mocks__/expected.json.flow.js");
+    const expectedString = fs.readFileSync(expected, "utf8");
+    expect(generator(file)).toEqual(expectedString);
+  });
 });

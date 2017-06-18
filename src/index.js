@@ -4,6 +4,7 @@ import program from "commander";
 import prettier from "prettier";
 import yaml from "js-yaml";
 import fs from "fs";
+import path from "path";
 
 // Swagger data types are base on types supported by the JSON-Scheme Draft4.
 const typeMapping = {
@@ -91,6 +92,8 @@ export class FlowTypeGenerator {
         if (FlowTypeGenerator.hasNext(key, properties) && !isPrimary) {
           this.appendResult(",");
         }
+      } else if (isPrimary) {
+        this.appendResult(`${typeMapping[property.type]}`);
       } else {
         this.appendResult(`${key}: ${typeMapping[property.type]}`);
         if (FlowTypeGenerator.hasNext(key, properties)) {
@@ -113,7 +116,9 @@ export class FlowTypeGenerator {
 }
 
 export const generator = (file: string) => {
-  const doc = yaml.safeLoad(fs.readFileSync(file, "utf8"));
+  const doc: Object = path.extname(file) === ".yaml"
+    ? yaml.safeLoad(fs.readFileSync(file, "utf8"))
+    : JSON.parse(fs.readFileSync(file, "utf8"));
   const g = new FlowTypeGenerator(doc);
   const options = {};
   return prettier.format(g.definitions(), options);
