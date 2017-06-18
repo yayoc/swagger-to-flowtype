@@ -8,10 +8,23 @@
     "clean": "rm -rf dist",
     "test": "jest",
     "prebuild": "npm run clean && npm run init",
-    "build": "babel ./src -d ./dist"
+    "build": "babel ./src -d ./dist",
+    "prepublish": "npm run build"
   },
   "author": "yayoc <hi@yayoc.com> (http://yayoc.com)",
-  "license": "ISC",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yayoc/swagger-to-flowtype.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yayoc/swagger-to-flowtype/issues"
+  },
+  "homepage": "https://github.com/yayoc/swagger-to-flowtype#readme",
+  "keywords": [
+    "flow",
+    "swagger"
+  ],
   "bin": {
     "swagger-to-flowtype": "./dist/index.js"
   },
