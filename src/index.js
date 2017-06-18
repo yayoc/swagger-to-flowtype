@@ -6,8 +6,7 @@ import yaml from "js-yaml";
 import fs from "fs";
 
 // Swagger data types are base on types supported by the JSON-Scheme Draft4.
-
-const swaggerFlowTypeMapping = {
+const typeMapping = {
   array: "Array<*>",
   boolean: "boolean",
   integer: "number",
@@ -17,114 +16,130 @@ const swaggerFlowTypeMapping = {
   string: "string"
 };
 
-const isPrimitiveType = (type: string) => {
-  return ["integer", "number", "string", "boolean"].indexOf(type) !== -1;
-};
-
-const definitionType = (ref: string) => {
-  const re = /#\/definitions\/(.*)/;
-  const found = ref.match(re);
-  return found ? found[1] : null;
-};
-
-const hasNext = (key: string, definitions: Object) => {
-  return (
-    Object.keys(definitions).findIndex(v => v === key) <
-    Object.keys(definitions).length - 1
-  );
-};
-
-const generateFlowType = (key, definition) => {
-  const returnString = "";
-  const types = determineTypes(key, definition);
-  return `type ${key} = ${types}`;
-};
-
-class FlowTypeGenerator {
+export class FlowTypeGenerator {
   result: string;
-  withExport: boolean;
+  +withExport: boolean;
   +swagger: Object;
 
-  constructor(swagger, withExport = true) {
+  constructor(swagger: Object, withExport: boolean = true) {
+    if (!swagger) {
+      throw new Error("Can't create FlowTypeGenerator");
+    }
     this.result = "// @flow \n";
-    this.withExport = withExport;
+    (this: any).withExport = withExport;
     (this: any).swagger = swagger;
   }
 
+  static isPrimitiveType(type: string) {
+    return ["integer", "number", "string", "boolean"].indexOf(type) !== -1;
+  }
+
+  static definitionType(ref: string) {
+    const re = /#\/definitions\/(.*)/;
+    const found = ref.match(re);
+    return found ? found[1] : "";
+  }
+
+  static hasNext(key: string, definitions: Object) {
+    const keys = Object.keys(definitions);
+    return keys.findIndex(v => v === key) < keys.length - 1;
+  }
+
   definitions(): string {
-    Object.keys(this.swagger).forEach((k, i) => {
-      this.result += this.withExport ? `export type ${k} = ` : `type ${k} = `;
-      const properties = this.swagger[k];
-      this.determineTypes(k, this.swagger, true);
-      this.result += `\n`;
+    const { definitions } = this.swagger;
+    Object.keys(definitions).forEach((k, i) => {
+      const headLine = this.withExport ? `export type ${k} = ` : `type ${k} = `;
+      this.appendResult(headLine);
+      this.determineTypes(k, definitions, true);
+      this.appendResult("\n");
     });
     return this.result;
   }
 
-  determineTypes(key, properties, isPrimary = false) {
+  appendResult(text: string) {
+    this.result += text;
+  }
+
+  determineTypes(key: string, properties: Object, isPrimary: boolean = false) {
     const property = properties[key];
     if ("$ref" in property) {
-      this.result += `${key}: ${definitionType(property["$ref"])}`;
-      if (hasNext(key, properties)) {
-        this.result += ",";
+      this.appendResult(
+        `${key}: ${FlowTypeGenerator.definitionType(property["$ref"])}`
+      );
+      if (FlowTypeGenerator.hasNext(key, properties)) {
+        this.appendResult(",");
       }
     }
 
-    if (isPrimitiveType(property.type)) {
-      this.result += `${key}: ${swaggerFlowTypeMapping[property.type]}`;
-      if (hasNext(key, properties)) {
-        this.result += ",";
+    if (FlowTypeGenerator.isPrimitiveType(property.type)) {
+      this.appendResult(`${key}: ${typeMapping[property.type]}`);
+      if (FlowTypeGenerator.hasNext(key, properties)) {
+        this.appendResult(",");
       }
     }
 
     if (property.type === "object") {
       if ("properties" in property) {
         if (!isPrimary) {
-          this.result += `${key}: `;
+          this.appendResult(`${key}: `);
         }
-        this.result += `{`;
+        this.appendResult("{");
         Object.keys(property.properties).forEach(k => {
           this.determineTypes(k, property.properties);
         });
-        this.result += `}`;
-        if (hasNext(key, properties) && !isPrimary) {
-          this.result += ",";
+        this.appendResult("}");
+        if (FlowTypeGenerator.hasNext(key, properties) && !isPrimary) {
+          this.appendResult(",");
         }
       } else {
-        this.result += `${key}: ${swaggerFlowTypeMapping[property.type]}`;
-        if (hasNext(key, properties)) {
-          this.result += ",";
+        this.appendResult(`${key}: ${typeMapping[property.type]}`);
+        if (FlowTypeGenerator.hasNext(key, properties)) {
+          this.appendResult(",");
         }
       }
     }
 
     if (property.type === "array") {
       const type: * = "$ref" in property.items
-        ? definitionType(property.items["$ref"])
+        ? FlowTypeGenerator.definitionType(property.items["$ref"])
         : property.items.type;
       const typeString = `Array<${type}>`;
-      this.result += `${key}: ${typeString}`;
-      if (hasNext(key, properties)) {
-        this.result += ",";
+      this.appendResult(`${key}: ${typeString}`);
+      if (FlowTypeGenerator.hasNext(key, properties)) {
+        this.appendResult(",");
       }
     }
   }
 }
+
+export const generator = (file: string) => {
+  var doc = yaml.safeLoad(fs.readFileSync(file, "utf8"));
+  const g = new FlowTypeGenerator(doc);
+  const options = {};
+  return prettier.format(g.definitions(), options);
+};
+
+export const writeToFile = (dist: string = "./flowtype.js", result: string) => {
+  fs.writeFile(dist, result, function(err) {
+    if (err) {
+      throw err;
+    }
+  });
+};
+
+export const distFile = (program: Object) => {
+  return program.distination || "./flowtype.js";
+};
+
 program
   .arguments("<file>")
   .option("-d --distination <distination>", "Distination path")
   .action(function(file) {
     try {
-      var doc = yaml.safeLoad(fs.readFileSync(file, "utf8"));
-      const { definitions } = doc;
-      const g = new FlowTypeGenerator(definitions);
-      const options = {};
-      const result = prettier.format(g.definitions(), options);
-      const dist = program.distination ? program.distination : "./flowtype.js";
-      fs.writeFile(dist, result, function(err) {
-        console.log(err);
-      });
-      console.log("Generated flow types.");
+      const result = generator(file);
+      const dist = distFile(program);
+      writeToFile(dist, result);
+      console.log(`Generated flow types to ${dist}`);
     } catch (e) {
       console.log(e);
     }
