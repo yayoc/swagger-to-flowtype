@@ -73,7 +73,7 @@ describe("generate flow types", () => {
 
   it("should generate expected flow types", () => {
     const file = path.join(__dirname, "__mocks__/swagger.yaml");
-    const expected = path.join(__dirname, "__mocks__/expected.flow.js");
+    const expected = path.join(__dirname, "__mocks__/expected.yaml.flow.js");
     const expectedString = fs.readFileSync(expected, "utf8");
     expect(generator(file)).toEqual(expectedString);
   });
