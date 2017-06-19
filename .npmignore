@@ -1,0 +1,4 @@
+.git/
+__tests__/
+node_modules/
+src/
