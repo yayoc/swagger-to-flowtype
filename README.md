@@ -12,6 +12,11 @@
 
 2. `$swagger-to-flowtype <YOUR SWAGGER FILE>`
 
+`-d option` can specify the path of generated file 
+
+`$swagger-to-flowtype <YOUR SWAGGER FILE> -d <OUTPUT FILE PATH>` 
+
+
 ## Requirements
 
 *Write later.*
