@@ -1,4 +1,4 @@
-#! /usr/local/bin/node
+#! /usr/bin/env node
 // @flow
 import program from "commander";
 import prettier from "prettier";
@@ -48,7 +48,7 @@ export class FlowTypeGenerator {
 
   definitions(): string {
     const { definitions } = this.swagger;
-    Object.keys(definitions).forEach((k) => {
+    Object.keys(definitions).forEach(k => {
       const headLine = this.withExport ? `export type ${k} = ` : `type ${k} = `;
       this.appendResult(headLine);
       this.determineTypes(k, definitions, true);
@@ -85,7 +85,7 @@ export class FlowTypeGenerator {
           this.appendResult(`${key}: `);
         }
         this.appendResult("{");
-        Object.keys(property.properties).forEach((k) => {
+        Object.keys(property.properties).forEach(k => {
           this.determineTypes(k, property.properties);
         });
         this.appendResult("}");
@@ -125,7 +125,7 @@ export const generator = (file: string) => {
 };
 
 export const writeToFile = (dist: string = "./flowtype.js", result: string) => {
-  fs.writeFile(dist, result, (err) => {
+  fs.writeFile(dist, result, err => {
     if (err) {
       throw err;
     }
@@ -137,7 +137,7 @@ export const distFile = (p: Object) => p.distination || "./flowtype.js";
 program
   .arguments("<file>")
   .option("-d --distination <distination>", "Distination path")
-  .action((file) => {
+  .action(file => {
     try {
       const result = generator(file);
       const dist = distFile(program);
