@@ -1,4 +1,4 @@
-#! /usr/local/bin/node
+#! /usr/bin/env node
 // @flow
 import program from "commander";
 import prettier from "prettier";
