@@ -46,10 +46,15 @@ export class FlowTypeGenerator {
     return keys.findIndex(v => v === key) < keys.length - 1;
   }
 
+  static prepareDefinition(def: string): string {
+    return def.replace("[", "").replace("]", "");
+  }
+
   definitions(): string {
     const { definitions } = this.swagger;
-    Object.keys(definitions).forEach((k) => {
-      const headLine = this.withExport ? `export type ${k} = ` : `type ${k} = `;
+    Object.keys(definitions).forEach((k: string) => {
+      const def: string = FlowTypeGenerator.prepareDefinition(k);
+      const headLine = this.withExport ? `export type ${def} = ` : `type ${def} = `;
       this.appendResult(headLine);
       this.determineTypes(k, definitions, true);
       this.appendResult("\n");

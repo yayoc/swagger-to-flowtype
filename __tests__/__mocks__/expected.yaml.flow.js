@@ -27,4 +27,6 @@ export type Pet = {
   tags: Array<Tag>,
   status: string
 };
+export type IGenericCollectionPet = { items: Array<Pet> };
+export type IGenericCollectionString = { items: Array<string> };
 export type ApiResponse = { code: number, type: string, message: string };

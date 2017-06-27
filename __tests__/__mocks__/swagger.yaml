@@ -684,6 +684,28 @@ definitions:
         - "sold"
     xml:
       name: "Pet"
+  IGenericCollection[Pet]:
+    type: "object"
+    properties:
+      items:
+        type: "array"
+        xml:
+          name: "items"
+          wrapped: true
+        items:
+          $ref: "#/definitions/Pet"
+    xml:
+      name: "IGenericCollection[Pet]"
+  IGenericCollection[String]:
+    type: "object"
+    properties:
+      items:
+        type: array
+        items:
+          type: string
+        readOnly: true
+    xml:
+      name: "IGenericCollection[Pet]"      
   ApiResponse:
     type: "object"
     properties:

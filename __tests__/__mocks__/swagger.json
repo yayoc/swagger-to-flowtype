@@ -217,6 +217,29 @@
           "type": "string"
         }
       }
+    },
+    "IGenericCollection[Pet]": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Pet"
+          }
+        }
+      }
+    },
+    "IGenericCollection[String]": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "readOnly": true
+        }
+      }
     }
   }
 }
