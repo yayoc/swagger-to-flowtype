@@ -223,9 +223,21 @@
       "properties": {
         "items": {
           "type": "array",
-          "items":{
+          "items": {
             "$ref": "#/definitions/Pet"
           }
+        }
+      }
+    },
+    "IGenericCollection[String]": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "readOnly": true
         }
       }
     }

@@ -696,6 +696,16 @@ definitions:
           $ref: "#/definitions/Pet"
     xml:
       name: "IGenericCollection[Pet]"
+  IGenericCollection[String]:
+    type: "object"
+    properties:
+      items:
+        type: array
+        items:
+          type: string
+        readOnly: true
+    xml:
+      name: "IGenericCollection[Pet]"      
   ApiResponse:
     type: "object"
     properties:
