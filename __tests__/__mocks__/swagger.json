@@ -217,6 +217,17 @@
           "type": "string"
         }
       }
+    },
+    "IGenericCollection[Pet]": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items":{
+            "$ref": "#/definitions/Pet"
+          }
+        }
+      }
     }
   }
 }

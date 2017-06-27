@@ -9,7 +9,8 @@
     "test": "jest",
     "prebuild": "npm run clean && npm run init",
     "build": "babel ./src -d ./dist",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "flow": "flow"
   },
   "author": "yayoc <hi@yayoc.com> (http://yayoc.com)",
   "license": "MIT",
