@@ -14,119 +14,98 @@ const typeMapping = {
   number: "number",
   null: "null",
   object: "Object",
-  string: "string"
+  "Object": "Object",
+  string: "string",
+  enum: "string"
 };
 
-export class FlowTypeGenerator {
-  result: string;
-  +withExport: boolean;
-  +swagger: Object;
+const definitionTypeName = (ref): string => {
+  const re = /#\/definitions\/(.*)/;
+  const found = ref.match(re);
+  return found ? found[1] : "";
+}
 
-  constructor(swagger: Object, withExport: boolean = true) {
-    if (!swagger) {
-      throw new Error("Can't create FlowTypeGenerator");
+const stripBrackets = (name: string) => name.replace(/[\[\]']+/g, '')
+
+const typeFor = (property: any): string => {
+  if (property.type === 'array') {
+    if ("$ref" in property.items) {
+      return `Array<${definitionTypeName(property.items.$ref)}>`;
+    } else {
+      return `Array<${typeMapping[property.items.type]}>`;
     }
-    this.result = "// @flow \n";
-    (this: any).withExport = withExport;
-    (this: any).swagger = swagger;
+  } else {
+    return typeMapping[property.type] || definitionTypeName(property.$ref);
+  }
+}
+
+const isRequired = (propertyName: string, definition: Object): boolean => {
+  return definition.required && definition.required.indexOf(propertyName) >= 0;
+}
+
+const propertyKeyForDefinition = (propName: string, definition: Object): string => {
+  if (program.checkRequired) {
+    return `${propName}${isRequired(propName, definition) ? '' : '?'}`;
+  } else {
+    return propName;
+  }
+}
+
+const propertiesList = (definition: Object) => {
+  if("allOf" in definition) {
+    return definition.allOf.map(propertiesList);
   }
 
-  static isPrimitiveType(type: string) {
-    return ["integer", "number", "string", "boolean"].indexOf(type) !== -1;
+  if(definition.$ref) {
+    return {$ref: definitionTypeName(definition.$ref)};
+  } else {
+    if (!definition.properties || Object.keys(definition.properties).length === 0) {
+      return {};
+    } else {
+      return Object.assign.apply(null,
+        Object.keys(definition.properties)
+          .reduce((properties: Array<Object>, propName: string) => {
+            return properties.concat({
+              [propertyKeyForDefinition(propName, definition)]: typeFor(definition.properties[propName])
+            })
+          }, [{}])
+      )
+    }
   }
+}
 
-  static definitionType(ref: string) {
-    const re = /#\/definitions\/(.*)/;
-    const found = ref.match(re);
-    return found ? found[1] : "";
+const propertiesTemplate = (properties: Object | Array<Object>): string => {
+  if (Array.isArray(properties)) {
+    return properties
+      .map((property) => property.$ref ? `& ${property.$ref}` : JSON.stringify(property))
+      .sort((a, b) => a[0] === '&' ? 1 : -1)
+      .join(' ')
+  } else {
+    return JSON.stringify(properties)
   }
+}
 
-  static hasNext(key: string, definitions: Object) {
-    const keys = Object.keys(definitions);
-    return keys.findIndex(v => v === key) < keys.length - 1;
-  }
-
-  static prepareDefinition(def: string): string {
-    return def.replace("[", "").replace("]", "");
-  }
-
-  definitions(): string {
-    const { definitions } = this.swagger;
-    Object.keys(definitions).forEach((k: string) => {
-      const def: string = FlowTypeGenerator.prepareDefinition(k);
-      const headLine = this.withExport ? `export type ${def} = ` : `type ${def} = `;
-      this.appendResult(headLine);
-      this.determineTypes(k, definitions, true);
-      this.appendResult("\n");
-    });
-    return this.result;
-  }
-
-  appendResult(text: string) {
-    this.result += text;
-  }
-
-  determineTypes(key: string, properties: Object, isPrimary: boolean = false) {
-    const property = properties[key];
-    if ("$ref" in property) {
-      this.appendResult(
-        `${key}: ${FlowTypeGenerator.definitionType(property.$ref)}`
-      );
-      if (FlowTypeGenerator.hasNext(key, properties)) {
-        this.appendResult(",");
+const generate = (swagger: Object) => {
+  return Object.keys(swagger.definitions)
+    .reduce((acc: Array<Object>, definitionName: string) => {
+      return acc.concat({
+        title: stripBrackets(definitionName),
+        properties: propertiesList(swagger.definitions[definitionName])
+      })
+    }, [])
+    .map((definition) => {
+      return `export type ${definition.title} = ${propertiesTemplate(definition.properties).replace(/\"/g, '')};`
       }
-    }
-
-    if (FlowTypeGenerator.isPrimitiveType(property.type)) {
-      this.appendResult(`${key}: ${typeMapping[property.type]}`);
-      if (FlowTypeGenerator.hasNext(key, properties)) {
-        this.appendResult(",");
-      }
-    }
-
-    if (property.type === "object") {
-      if ("properties" in property) {
-        if (!isPrimary) {
-          this.appendResult(`${key}: `);
-        }
-        this.appendResult("{");
-        Object.keys(property.properties).forEach((k) => {
-          this.determineTypes(k, property.properties);
-        });
-        this.appendResult("}");
-        if (FlowTypeGenerator.hasNext(key, properties) && !isPrimary) {
-          this.appendResult(",");
-        }
-      } else if (isPrimary) {
-        this.appendResult(`${typeMapping[property.type]}`);
-      } else {
-        this.appendResult(`${key}: ${typeMapping[property.type]}`);
-        if (FlowTypeGenerator.hasNext(key, properties)) {
-          this.appendResult(",");
-        }
-      }
-    }
-
-    if (property.type === "array") {
-      const type: * = "$ref" in property.items
-        ? FlowTypeGenerator.definitionType(property.items.$ref)
-        : property.items.type;
-      const typeString = `Array<${type}>`;
-      this.appendResult(`${key}: ${typeString}`);
-      if (FlowTypeGenerator.hasNext(key, properties)) {
-        this.appendResult(",");
-      }
-    }
-  }
+    ).join(' ')
 }
 
 export const generator = (file: string) => {
   const doc: Object = path.extname(file) === ".yaml"
     ? yaml.safeLoad(fs.readFileSync(file, "utf8"))
     : JSON.parse(fs.readFileSync(file, "utf8"));
-  const g = new FlowTypeGenerator(doc);
   const options = {};
-  return prettier.format(g.definitions(), options);
+  const result = `// @flow\n${generate(doc)}`
+  return prettier.format(result, options);
 };
 
 export const writeToFile = (dist: string = "./flowtype.js", result: string) => {
@@ -137,11 +116,12 @@ export const writeToFile = (dist: string = "./flowtype.js", result: string) => {
   });
 };
 
-export const distFile = (p: Object) => p.distination || "./flowtype.js";
+export const distFile = (p: Object) => p.destination || "./flowtype.js";
 
 program
   .arguments("<file>")
-  .option("-d --distination <distination>", "Distination path")
+  .option("-d --destination <destination>", "Destination path")
+  .option("-cr --check-required", "Add question mark to optional properties")
   .action((file) => {
     try {
       const result = generator(file);

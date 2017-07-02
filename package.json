@@ -49,6 +49,8 @@
     "jest": "^20.0.4"
   },
   "jest": {
-    "testRegex": "(/__tests__/[^__mocks__].*|(\\.|/)(test|spec))\\.jsx?$"
+    "testRegex": "(/__tests__/[^__mocks__].*|(\\.|/)(test|spec))\\.jsx?$",
+    "collectCoverageFrom" : ["src/index.js"],
+    "collectCoverage": true
   }
 }

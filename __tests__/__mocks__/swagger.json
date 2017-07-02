@@ -199,6 +199,9 @@
         },
         "tag": {
           "type": "string"
+        },
+        "category": {
+          "$ref": "#/definitions/Category"
         }
       }
     },
