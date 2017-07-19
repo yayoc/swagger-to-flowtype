@@ -1,6 +1,6 @@
 {
   "name": "swagger-to-flowtype",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Command line tool for generating flow types from swagger",
   "main": "./dist/index.js",
   "scripts": {
@@ -50,7 +50,9 @@
   },
   "jest": {
     "testRegex": "(/__tests__/[^__mocks__].*|(\\.|/)(test|spec))\\.jsx?$",
-    "collectCoverageFrom" : ["src/index.js"],
+    "collectCoverageFrom": [
+      "src/index.js"
+    ],
     "collectCoverage": true
   }
 }
