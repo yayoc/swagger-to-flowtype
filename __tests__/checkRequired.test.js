@@ -4,7 +4,7 @@ import { FlowTypeGenerator, generator } from "../src/index";
 
 jest.mock('commander', () => {
   return {
-    checkRequired: false,
+    checkRequired: true,
     arguments: jest.fn().mockReturnThis(),
     option: jest.fn().mockReturnThis(),
     action: jest.fn().mockReturnThis(),
@@ -13,17 +13,17 @@ jest.mock('commander', () => {
 });
 
 describe("generate flow types", () => {
-  describe("without --check-required", () => {
+  describe("with --check-required", () => {
     it("should generate expected flow types", () => {
       const file = path.join(__dirname, "__mocks__/swagger.yaml");
-      const expected = path.join(__dirname, "__mocks__/expected.yaml.flow.js");
+      const expected = path.join(__dirname, "__mocks__/checkRequired/expected.yaml.flow.js");
       const expectedString = fs.readFileSync(expected, "utf8");
       expect(generator(file)).toEqual(expectedString);
     });
 
     it("should generate expected flow types from swagger.json", () => {
       const file = path.join(__dirname, "__mocks__/swagger.json");
-      const expected = path.join(__dirname, "__mocks__/expected.json.flow.js");
+      const expected = path.join(__dirname, "__mocks__/checkRequired/expected.json.flow.js");
       const expectedString = fs.readFileSync(expected, "utf8");
       expect(generator(file)).toEqual(expectedString);
     });
