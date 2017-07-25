@@ -6,16 +6,52 @@
 
 #### Install package
 
-1. `npm i -g swagger-to-flowtype`
+`npm i -g swagger-to-flowtype`
 
 #### Generating flow type definitions
 
-2. `$swagger-to-flowtype <YOUR SWAGGER FILE>`
+`$swagger-to-flowtype <YOUR SWAGGER FILE>`
 
 This command generates a file named **flowtype.js** includes type definitions as default.  
-You can also specify output path with `-d option`.
+
+##### Options
+
+*`Specify an output path`*
+
+You can also specify an output path with `-d option`.
 
 `$swagger-to-flowtype <YOUR SWAGGER FILE> -d <OUTPUT FILE PATH>` 
+
+*`Supporting Maybe type`*
+
+If you pass a `--check-required` option, `swagger-to-flowtype` will check `required field` on your swagger file, then output flow definitions with Maybe type.
+
+```json
+"NewPet": {
+  "type": "object",
+  "required": [
+    "name"
+  ],
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "tag": {
+      "type": "string"
+    }
+  }
+}
+```
+
+will be
+
+```js
+export type NewPet = {
+  name: string,
+  tag?: string
+}
+```
+
 
 ## Example
 
