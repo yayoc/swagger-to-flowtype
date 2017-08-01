@@ -32,7 +32,7 @@
   "dependencies": {
     "commander": "^2.9.0",
     "js-yaml": "^3.8.4",
-    "prettier": "^1.4.4"
+    "prettier": "^1.5.3"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
@@ -42,8 +42,11 @@
     "babel-preset-flow": "^6.23.0",
     "eslint": "^3.19.0",
     "eslint-config-airbnb": "^15.0.1",
+    "eslint-config-prettier": "^2.3.0",
+    "eslint-plugin-flowtype": "^2.35.0",
     "eslint-plugin-import": "^2.3.0",
     "eslint-plugin-jsx-a11y": "^5.0.3",
+    "eslint-plugin-prettier": "^2.1.2",
     "eslint-plugin-react": "^7.1.0",
     "flow-bin": "^0.48.0",
     "jest": "^20.0.4"
