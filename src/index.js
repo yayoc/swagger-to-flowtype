@@ -84,15 +84,26 @@ const propertiesList = (definition: Object) => {
   );
 };
 
+const withExact = (property: string): string => {
+  return property.replace(/{/g, "{|").replace(/}/g, "|}");
+};
+
 const propertiesTemplate = (properties: Object | Array<Object>): string => {
   if (Array.isArray(properties)) {
     return properties
       .map(
         property =>
-          property.$ref ? `& ${property.$ref}` : JSON.stringify(property)
+          property.$ref
+            ? `& ${property.$ref}`
+            : program.exact
+              ? withExact(JSON.stringify(property))
+              : JSON.stringify(property)
       )
       .sort(a => (a[0] === "&" ? 1 : -1))
       .join(" ");
+  }
+  if (program.exact) {
+    return withExact(JSON.stringify(properties));
   }
   return JSON.stringify(properties);
 };
@@ -143,6 +154,7 @@ program
   .arguments("<file>")
   .option("-d --destination <destination>", "Destination path")
   .option("-cr --check-required", "Add question mark to optional properties")
+  .option("-e --exact", "Add exact types")
   .action(file => {
     try {
       const result = generator(file);
