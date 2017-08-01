@@ -85,20 +85,20 @@ const propertiesList = (definition: Object) => {
 };
 
 const withExact = (property: string): string => {
-  return property.replace(/{/g, "{|").replace(/}/g, "|}");
+  const result = property.replace(/{/g, "{|").replace(/}/g, "|}");
+  return result;
 };
 
 const propertiesTemplate = (properties: Object | Array<Object>): string => {
   if (Array.isArray(properties)) {
     return properties
-      .map(
-        property =>
-          property.$ref
-            ? `& ${property.$ref}`
-            : program.exact
-              ? withExact(JSON.stringify(property))
-              : JSON.stringify(property)
-      )
+      .map(property => {
+        let p = property.$ref ? `& ${property.$ref}` : JSON.stringify(property);
+        if (!property.$ref && program.exact) {
+          p = withExact(p);
+        }
+        return p;
+      })
       .sort(a => (a[0] === "&" ? 1 : -1))
       .join(" ");
   }
