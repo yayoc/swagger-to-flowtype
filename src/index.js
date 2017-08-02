@@ -14,7 +14,7 @@ const typeMapping = {
   number: "number",
   null: "null",
   object: "Object",
-  "Object": "Object",
+  Object: "Object",
   string: "string",
   enum: "string"
 };
@@ -23,93 +23,125 @@ const definitionTypeName = (ref): string => {
   const re = /#\/definitions\/(.*)/;
   const found = ref.match(re);
   return found ? found[1] : "";
-}
+};
 
-const stripBrackets = (name: string) => name.replace(/[\[\]']+/g, '')
+const stripBrackets = (name: string) => name.replace(/[[\]']+/g, "");
 
 const typeFor = (property: any): string => {
-  if (property.type === 'array') {
+  if (property.type === "array") {
     if ("$ref" in property.items) {
       return `Array<${definitionTypeName(property.items.$ref)}>`;
-    } else {
-      return `Array<${typeMapping[property.items.type]}>`;
     }
-  } else {
-    return typeMapping[property.type] || definitionTypeName(property.$ref);
+    return `Array<${typeMapping[property.items.type]}>`;
   }
-}
+  return typeMapping[property.type] || definitionTypeName(property.$ref);
+};
 
 const isRequired = (propertyName: string, definition: Object): boolean => {
-  return definition.required && definition.required.indexOf(propertyName) >= 0;
-}
+  const result =
+    definition.required && definition.required.indexOf(propertyName) >= 0;
+  return result;
+};
 
-const propertyKeyForDefinition = (propName: string, definition: Object): string => {
+const propertyKeyForDefinition = (
+  propName: string,
+  definition: Object
+): string => {
   if (program.checkRequired) {
-    return `${propName}${isRequired(propName, definition) ? '' : '?'}`;
-  } else {
-    return propName;
+    return `${propName}${isRequired(propName, definition) ? "" : "?"}`;
   }
-}
+  return propName;
+};
 
 const propertiesList = (definition: Object) => {
-  if("allOf" in definition) {
+  if ("allOf" in definition) {
     return definition.allOf.map(propertiesList);
   }
 
-  if(definition.$ref) {
-    return {$ref: definitionTypeName(definition.$ref)};
-  } else {
-    if (!definition.properties || Object.keys(definition.properties).length === 0) {
-      return {};
-    } else {
-      return Object.assign.apply(null,
-        Object.keys(definition.properties)
-          .reduce((properties: Array<Object>, propName: string) => {
-            return properties.concat({
-              [propertyKeyForDefinition(propName, definition)]: typeFor(definition.properties[propName])
-            })
-          }, [{}])
-      )
-    }
+  if (definition.$ref) {
+    return { $ref: definitionTypeName(definition.$ref) };
   }
-}
+
+  if (
+    !definition.properties ||
+    Object.keys(definition.properties).length === 0
+  ) {
+    return {};
+  }
+  return Object.assign.apply(
+    null,
+    Object.keys(definition.properties).reduce(
+      (properties: Array<Object>, propName: string) => {
+        const arr = properties.concat({
+          [propertyKeyForDefinition(propName, definition)]: typeFor(
+            definition.properties[propName]
+          )
+        });
+        return arr;
+      },
+      [{}]
+    )
+  );
+};
+
+const withExact = (property: string): string => {
+  const result = property.replace(/{/g, "{|").replace(/}/g, "|}");
+  return result;
+};
 
 const propertiesTemplate = (properties: Object | Array<Object>): string => {
   if (Array.isArray(properties)) {
     return properties
-      .map((property) => property.$ref ? `& ${property.$ref}` : JSON.stringify(property))
-      .sort((a, b) => a[0] === '&' ? 1 : -1)
-      .join(' ')
-  } else {
-    return JSON.stringify(properties)
+      .map(property => {
+        let p = property.$ref ? `& ${property.$ref}` : JSON.stringify(property);
+        if (!property.$ref && program.exact) {
+          p = withExact(p);
+        }
+        return p;
+      })
+      .sort(a => (a[0] === "&" ? 1 : -1))
+      .join(" ");
   }
-}
+  if (program.exact) {
+    return withExact(JSON.stringify(properties));
+  }
+  return JSON.stringify(properties);
+};
 
 const generate = (swagger: Object) => {
-  return Object.keys(swagger.definitions)
+  const g = Object.keys(swagger.definitions)
     .reduce((acc: Array<Object>, definitionName: string) => {
-      return acc.concat({
+      const arr = acc.concat({
         title: stripBrackets(definitionName),
         properties: propertiesList(swagger.definitions[definitionName])
-      })
+      });
+      return arr;
     }, [])
-    .map((definition) => {
-      return `export type ${definition.title} = ${propertiesTemplate(definition.properties).replace(/\"/g, '')};`
-      }
-    ).join(' ')
-}
+    .map(definition => {
+      const s = `export type ${definition.title} = ${propertiesTemplate(
+        definition.properties
+      ).replace(/"/g, "")};`;
+      return s;
+    })
+    .join(" ");
+  return g;
+};
 
 export const generator = (file: string) => {
-  const doc: Object = path.extname(file) === ".yaml"
-    ? yaml.safeLoad(fs.readFileSync(file, "utf8"))
-    : JSON.parse(fs.readFileSync(file, "utf8"));
+  const ext = path.extname(file);
+  let doc;
+  if (ext === ".yaml") {
+    doc = yaml.safeLoad(fs.readFileSync(file, "utf8"));
+  } else {
+    doc = JSON.parse(fs.readFileSync(file, "utf8"));
+  }
   const options = {};
-  const result = `// @flow\n${generate(doc)}`
+  const result = `// @flow\n${generate(doc)}`;
   return prettier.format(result, options);
 };
 
 export const writeToFile = (dist: string = "./flowtype.js", result: string) => {
-  fs.writeFile(dist, result, (err) => {
+  fs.writeFile(dist, result, err => {
     if (err) {
       throw err;
     }
@@ -122,7 +154,8 @@ program
   .arguments("<file>")
   .option("-d --destination <destination>", "Destination path")
   .option("-cr --check-required", "Add question mark to optional properties")
-  .action((file) => {
+  .option("-e --exact", "Add exact types")
+  .action(file => {
     try {
       const result = generator(file);
       const dist = distFile(program);
