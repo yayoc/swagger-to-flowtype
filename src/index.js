@@ -32,6 +32,10 @@ const typeFor = (property: any): string => {
     if ("$ref" in property.items) {
       return `Array<${definitionTypeName(property.items.$ref)}>`;
     }
+    else if (property.items.type === 'object') {
+      const child = propertiesTemplate(propertiesList(property.items)).replace(/"/g, "");
+      return `Array<${child}>`;
+    }
     return `Array<${typeMapping[property.items.type]}>`;
   }
   return typeMapping[property.type] || definitionTypeName(property.$ref);

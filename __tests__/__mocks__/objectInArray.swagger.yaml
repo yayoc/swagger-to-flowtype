@@ -1,0 +1,17 @@
+definitions:
+  ObjectInArray:
+    type: "object"
+    required:
+      - array
+    properties:
+      array: 
+        type: array
+        items:
+          type: "object"
+          required:
+            - requiredProp
+          properties:
+            requiredProp:
+              type: string
+            optionalProp:
+              type: string
