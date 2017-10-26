@@ -4,7 +4,7 @@ export type Order = {|
   petId: number,
   quantity: number,
   shipDate: string,
-  status: string,
+  status: "placed" | "approved" | "delivered",
   complete: boolean
 |};
 export type Category = {| id: number, name: string |};
@@ -25,7 +25,7 @@ export type Pet = {|
   name: string,
   photoUrls: Array<string>,
   tags: Array<Tag>,
-  status: string
+  status: "available" | "pending" | "sold"
 |};
 export type IGenericCollectionPet = {| items: Array<Pet> |};
 export type IGenericCollectionString = {| items: Array<string> |};

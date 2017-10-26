@@ -37,6 +37,8 @@ const typeFor = (property: any): string => {
       return `Array<${child}>`;
     }
     return `Array<${typeMapping[property.items.type]}>`;
+  } else if (property.type === "string" && "enum" in property) {
+    return property.enum.map(e => `'${e}'`).join(" | ");
   }
   return typeMapping[property.type] || definitionTypeName(property.$ref);
 };
