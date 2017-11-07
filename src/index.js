@@ -68,6 +68,10 @@ const propertiesList = (definition: Object) => {
     return { $ref: definitionTypeName(definition.$ref) };
   }
 
+  if ("type" in definition && definition.type !== "object") {
+    return typeFor(definition);
+  }
+
   if (
     !definition.properties ||
     Object.keys(definition.properties).length === 0
@@ -95,7 +99,10 @@ const withExact = (property: string): string => {
   return result;
 };
 
-const propertiesTemplate = (properties: Object | Array<Object>): string => {
+const propertiesTemplate = (properties: Object | Array<Object> | string): string => {
+  if (typeof properties === "string") {
+    return properties;
+  }
   if (Array.isArray(properties)) {
     return properties
       .map(property => {
