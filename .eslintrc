@@ -16,6 +16,7 @@
     "comma-dangle": "off",
     "no-console": "off",
     "prettier/prettier": "error",
-    "curly": 0
+    "curly": 0,
+    "no-use-before-define": "error"
   }
 }
