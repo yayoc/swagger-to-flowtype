@@ -161,7 +161,13 @@ export const writeToFile = (dist: string = "./flowtype.js", result: string) => {
   });
 };
 
-export const distFile = (p: Object) => p.destination || "./flowtype.js";
+export const distFile = (p: Object, inputFileName: string) => {
+  if (p.destination) {
+    return p.destination;
+  }
+  const ext = path.parse(inputFileName).ext;
+  return inputFileName.replace(ext, ".js");
+};
 
 program
   .arguments("<file>")
@@ -171,7 +177,7 @@ program
   .action(file => {
     try {
       const result = generator(file);
-      const dist = distFile(program);
+      const dist = distFile(program, file);
       writeToFile(dist, result);
       console.log(`Generated flow types to ${dist}`);
     } catch (e) {
