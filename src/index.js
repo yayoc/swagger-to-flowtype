@@ -32,9 +32,11 @@ const typeFor = (property: any): string => {
   if (property.type === "array") {
     if ("$ref" in property.items) {
       return `Array<${definitionTypeName(property.items.$ref)}>`;
-    }
-    else if (property.items.type === 'object') {
-      const child = propertiesTemplate(propertiesList(property.items)).replace(/"/g, "");
+    } else if (property.items.type === "object") {
+      const child = propertiesTemplate(propertiesList(property.items)).replace(
+        /"/g,
+        ""
+      );
       return `Array<${child}>`;
     }
     return `Array<${typeMapping[property.items.type]}>`;
@@ -100,7 +102,9 @@ const withExact = (property: string): string => {
   return result;
 };
 
-const propertiesTemplate = (properties: Object | Array<Object> | string): string => {
+const propertiesTemplate = (
+  properties: Object | Array<Object> | string
+): string => {
   if (typeof properties === "string") {
     return properties;
   }
@@ -145,13 +149,6 @@ const generate = (swagger: Object): string => {
 };
 
 export const generator = (content: Object) => {
-  // const ext = path.extname(file);
-  // let doc;
-  // if (ext === ".yaml") {
-  //   doc = yaml.safeLoad(fs.readFileSync(file, "utf8"));
-  // } else {
-  //   doc = JSON.parse(fs.readFileSync(file, "utf8"));
-  // }
   const options = {};
   const result = `// @flow\n${generate(content)}`;
   return prettier.format(result, options);
@@ -214,7 +211,6 @@ export const getContent = (fileOrUrl: string): Promise<Object> => {
   const content = getContentFromFile(fileOrUrl);
   return Promise.resolve(content);
 };
-
 
 program
   .arguments("<file>")
