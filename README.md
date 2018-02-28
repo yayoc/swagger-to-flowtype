@@ -10,7 +10,7 @@
 
 #### Generating flow type definitions
 
-`$swagger-to-flowtype <YOUR SWAGGER FILE>`
+`$swagger-to-flowtype <YOUR SWAGGER FILE OR URL>`
 
 This command generates a file named **flowtype.js** includes type definitions as default.  
 
@@ -20,7 +20,7 @@ This command generates a file named **flowtype.js** includes type definitions as
 
 You can also specify an output path with `-d option`.
 
-`$swagger-to-flowtype <YOUR SWAGGER FILE> -d <OUTPUT FILE PATH>` 
+`$swagger-to-flowtype <YOUR SWAGGER FILE PATH OR URL> -d <OUTPUT FILE PATH>` 
 
 *`Supporting Maybe type`*
 
