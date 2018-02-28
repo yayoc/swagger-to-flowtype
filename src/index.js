@@ -5,6 +5,7 @@ import prettier from "prettier";
 import yaml from "js-yaml";
 import fs from "fs";
 import path from "path";
+import axios from "axios";
 
 // Swagger data types are base on types supported by the JSON-Scheme Draft4.
 const typeMapping = {
@@ -31,9 +32,11 @@ const typeFor = (property: any): string => {
   if (property.type === "array") {
     if ("$ref" in property.items) {
       return `Array<${definitionTypeName(property.items.$ref)}>`;
-    }
-    else if (property.items.type === 'object') {
-      const child = propertiesTemplate(propertiesList(property.items)).replace(/"/g, "");
+    } else if (property.items.type === "object") {
+      const child = propertiesTemplate(propertiesList(property.items)).replace(
+        /"/g,
+        ""
+      );
       return `Array<${child}>`;
     }
     return `Array<${typeMapping[property.items.type]}>`;
@@ -99,7 +102,9 @@ const withExact = (property: string): string => {
   return result;
 };
 
-const propertiesTemplate = (properties: Object | Array<Object> | string): string => {
+const propertiesTemplate = (
+  properties: Object | Array<Object> | string
+): string => {
   if (typeof properties === "string") {
     return properties;
   }
@@ -121,7 +126,10 @@ const propertiesTemplate = (properties: Object | Array<Object> | string): string
   return JSON.stringify(properties);
 };
 
-const generate = (swagger: Object) => {
+const generate = (swagger: Object): string => {
+  if (!swagger.definitions) {
+    throw new Error("There is no definition");
+  }
   const g = Object.keys(swagger.definitions)
     .reduce((acc: Array<Object>, definitionName: string) => {
       const arr = acc.concat({
@@ -140,16 +148,9 @@ const generate = (swagger: Object) => {
   return g;
 };
 
-export const generator = (file: string) => {
-  const ext = path.extname(file);
-  let doc;
-  if (ext === ".yaml") {
-    doc = yaml.safeLoad(fs.readFileSync(file, "utf8"));
-  } else {
-    doc = JSON.parse(fs.readFileSync(file, "utf8"));
-  }
+export const generator = (content: Object) => {
   const options = {};
-  const result = `// @flow\n${generate(doc)}`;
+  const result = `// @flow\n${generate(content)}`;
   return prettier.format(result, options);
 };
 
@@ -161,12 +162,45 @@ export const writeToFile = (dist: string = "./flowtype.js", result: string) => {
   });
 };
 
-export const distFile = (p: Object, inputFileName: string) => {
+export const isUrl = (value: string): boolean =>
+  value.match(/https?:\/\//) !== null;
+
+export const distFile = (p: Object, inputFileName: string): string => {
   if (p.destination) {
     return p.destination;
   }
+  if (isUrl(inputFileName)) {
+    return "./flowtype.js";
+  }
+
   const ext = path.parse(inputFileName).ext;
   return inputFileName.replace(ext, ".js");
+};
+
+export const getContentFromFile = (file: string): Object => {
+  const ext = path.extname(file);
+  const readFile = fs.readFileSync(file, "utf8");
+  return ext === ".yaml" ? yaml.safeLoad(readFile) : JSON.parse(readFile);
+};
+
+export const isObject = (value: any): boolean =>
+  typeof value === "object" && value !== null;
+
+export const getContentFromUrl = (url: string): Promise<Object> =>
+  axios({
+    method: "get",
+    url
+  }).then(response => {
+    const { data } = response;
+    return isObject(data) ? data : yaml.safeLoad(data);
+  });
+
+export const getContent = (fileOrUrl: string): Promise<Object> => {
+  if (isUrl(fileOrUrl)) {
+    return getContentFromUrl(fileOrUrl);
+  }
+  const content = getContentFromFile(fileOrUrl);
+  return Promise.resolve(content);
 };
 
 program
@@ -174,9 +208,10 @@ program
   .option("-d --destination <destination>", "Destination path")
   .option("-cr --check-required", "Add question mark to optional properties")
   .option("-e --exact", "Add exact types")
-  .action(file => {
+  .action(async file => {
     try {
-      const result = generator(file);
+      const content = await getContent(file);
+      const result = generator(content);
       const dist = distFile(program, file);
       writeToFile(dist, result);
       console.log(`Generated flow types to ${dist}`);
