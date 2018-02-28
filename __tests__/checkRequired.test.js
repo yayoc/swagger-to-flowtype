@@ -1,17 +1,15 @@
 import fs from "fs";
 import path from "path";
 import yaml from "js-yaml";
-import { FlowTypeGenerator, generator } from "../src/index";
+import { generator } from "../src/index";
 
-jest.mock("commander", () => {
-  return {
-    checkRequired: true,
-    arguments: jest.fn().mockReturnThis(),
-    option: jest.fn().mockReturnThis(),
-    action: jest.fn().mockReturnThis(),
-    parse: jest.fn().mockReturnThis()
-  };
-});
+jest.mock("commander", () => ({
+  checkRequired: true,
+  arguments: jest.fn().mockReturnThis(),
+  option: jest.fn().mockReturnThis(),
+  action: jest.fn().mockReturnThis(),
+  parse: jest.fn().mockReturnThis()
+}));
 
 describe("generate flow types", () => {
   describe("with --check-required", () => {

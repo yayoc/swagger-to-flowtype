@@ -128,7 +128,7 @@ const propertiesTemplate = (
 
 const generate = (swagger: Object): string => {
   if (!swagger.definitions) {
-    return "";
+    throw new Error("There is no definition");
   }
   const g = Object.keys(swagger.definitions)
     .reduce((acc: Array<Object>, definitionName: string) => {
@@ -162,9 +162,8 @@ export const writeToFile = (dist: string = "./flowtype.js", result: string) => {
   });
 };
 
-export const isUrl = (value: string): boolean => {
-  return value.match(/https?:\/\//) !== null;
-};
+export const isUrl = (value: string): boolean =>
+  value.match(/https?:\/\//) !== null;
 
 export const distFile = (p: Object, inputFileName: string): string => {
   if (p.destination) {
@@ -193,8 +192,8 @@ export const isJSON = (value: string): boolean => {
   }
 };
 
-export const getContentFromUrl = (url: string): Promise<Object> => {
-  return axios({
+export const getContentFromUrl = (url: string): Promise<Object> =>
+  axios({
     method: "get",
     url,
     responseType: "arraybuffer"
@@ -202,7 +201,6 @@ export const getContentFromUrl = (url: string): Promise<Object> => {
     const { data } = response;
     return isJSON(data) ? JSON.parse(data) : yaml.safeLoad(data);
   });
-};
 
 export const getContent = (fileOrUrl: string): Promise<Object> => {
   if (isUrl(fileOrUrl)) {
