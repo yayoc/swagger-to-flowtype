@@ -7,6 +7,7 @@
     "init": "mkdir dist",
     "clean": "rm -rf dist",
     "test": "jest",
+    "test:watch": "jest --watch",
     "prebuild": "npm run clean && npm run init",
     "build": "babel ./src -d ./dist",
     "prepublish": "npm run build",
@@ -30,6 +31,7 @@
     "swagger-to-flowtype": "./dist/index.js"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "commander": "^2.9.0",
     "js-yaml": "^3.8.4",
     "prettier": "^1.5.3"

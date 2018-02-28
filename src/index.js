@@ -5,6 +5,7 @@ import prettier from "prettier";
 import yaml from "js-yaml";
 import fs from "fs";
 import path from "path";
+import axios from "axios";
 
 // Swagger data types are base on types supported by the JSON-Scheme Draft4.
 const typeMapping = {
@@ -121,7 +122,10 @@ const propertiesTemplate = (properties: Object | Array<Object> | string): string
   return JSON.stringify(properties);
 };
 
-const generate = (swagger: Object) => {
+const generate = (swagger: Object): string => {
+  if (!swagger.definitions) {
+    return "";
+  }
   const g = Object.keys(swagger.definitions)
     .reduce((acc: Array<Object>, definitionName: string) => {
       const arr = acc.concat({
@@ -140,16 +144,16 @@ const generate = (swagger: Object) => {
   return g;
 };
 
-export const generator = (file: string) => {
-  const ext = path.extname(file);
-  let doc;
-  if (ext === ".yaml") {
-    doc = yaml.safeLoad(fs.readFileSync(file, "utf8"));
-  } else {
-    doc = JSON.parse(fs.readFileSync(file, "utf8"));
-  }
+export const generator = (content: Object) => {
+  // const ext = path.extname(file);
+  // let doc;
+  // if (ext === ".yaml") {
+  //   doc = yaml.safeLoad(fs.readFileSync(file, "utf8"));
+  // } else {
+  //   doc = JSON.parse(fs.readFileSync(file, "utf8"));
+  // }
   const options = {};
-  const result = `// @flow\n${generate(doc)}`;
+  const result = `// @flow\n${generate(content)}`;
   return prettier.format(result, options);
 };
 
@@ -161,22 +165,66 @@ export const writeToFile = (dist: string = "./flowtype.js", result: string) => {
   });
 };
 
-export const distFile = (p: Object, inputFileName: string) => {
+export const isUrl = (value: string): boolean => {
+  return value.match(/https?:\/\//) !== null;
+};
+
+export const distFile = (p: Object, inputFileName: string): string => {
   if (p.destination) {
     return p.destination;
   }
+  if (isUrl(inputFileName)) {
+    return "./flowtype.js";
+  }
+
   const ext = path.parse(inputFileName).ext;
   return inputFileName.replace(ext, ".js");
 };
+
+export const getContentFromFile = (file: string): Object => {
+  const ext = path.extname(file);
+  const readFile = fs.readFileSync(file, "utf8");
+  return ext === ".yaml" ? yaml.safeLoad(readFile) : JSON.parse(readFile);
+};
+
+export const isJSON = (value: string): boolean => {
+  try {
+    JSON.parse(value);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
+export const getContentFromUrl = (url: string): Promise<Object> => {
+  return axios({
+    method: "get",
+    url,
+    responseType: "arraybuffer"
+  }).then(response => {
+    const { data } = response;
+    return isJSON(data) ? JSON.parse(data) : yaml.safeLoad(data);
+  });
+};
+
+export const getContent = (fileOrUrl: string): Promise<Object> => {
+  if (isUrl(fileOrUrl)) {
+    return getContentFromUrl(fileOrUrl);
+  }
+  const content = getContentFromFile(fileOrUrl);
+  return Promise.resolve(content);
+};
+
 
 program
   .arguments("<file>")
   .option("-d --destination <destination>", "Destination path")
   .option("-cr --check-required", "Add question mark to optional properties")
   .option("-e --exact", "Add exact types")
-  .action(file => {
+  .action(async file => {
     try {
-      const result = generator(file);
+      const content = await getContent(file);
+      const result = generator(content);
       const dist = distFile(program, file);
       writeToFile(dist, result);
       console.log(`Generated flow types to ${dist}`);

@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import yaml from "js-yaml";
 import { FlowTypeGenerator, generator } from "../src/index";
 
 jest.mock('commander', () => {
@@ -16,9 +17,10 @@ describe("generate flow types", () => {
   describe("parse enum on root element", () => {
     it("should generate expected flow types", () => {
       const file = path.join(__dirname, "__mocks__/enumOnRoot.swagger.yaml");
+      const content = yaml.safeLoad(fs.readFileSync(file, "utf8"));
       const expected = path.join(__dirname, "__mocks__/enumOnRoot.flow.js");
       const expectedString = fs.readFileSync(expected, "utf8");
-      expect(generator(file)).toEqual(expectedString);
+      expect(generator(content)).toEqual(expectedString);
     });
   });
 });
