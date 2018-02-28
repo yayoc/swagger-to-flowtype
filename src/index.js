@@ -183,15 +183,6 @@ export const getContentFromFile = (file: string): Object => {
   return ext === ".yaml" ? yaml.safeLoad(readFile) : JSON.parse(readFile);
 };
 
-export const isJSON = (value: string): boolean => {
-  try {
-    JSON.parse(value);
-    return true;
-  } catch (e) {
-    return false;
-  }
-};
-
 export const isObject = (value: any): boolean =>
   typeof value === "object" && value !== null;
 

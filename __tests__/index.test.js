@@ -4,7 +4,6 @@ import yaml from "js-yaml";
 import {
   generator,
   isUrl,
-  isJSON,
   getContentFromUrl,
   getContentFromFile
 } from "../src/index";
@@ -45,17 +44,6 @@ describe("Utility functions", () => {
 
     it("should return false when value is not URL", () => {
       expect(isUrl("/Users/foo/sample.json")).toEqual(false);
-    });
-  });
-
-  describe("isJSON", () => {
-    it("should return true when value is JSON", () => {
-      const file = path.join(__dirname, "__mocks__/swagger.json");
-      expect(isJSON(fs.readFileSync(file, "utf8"))).toEqual(true);
-    });
-    it("should return false when value is not JSON", () => {
-      const file = path.join(__dirname, "__mocks__/swagger.yaml");
-      expect(isJSON(fs.readFileSync(file, "utf8"))).toEqual(false);
     });
   });
 });
