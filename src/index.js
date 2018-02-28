@@ -192,14 +192,16 @@ export const isJSON = (value: string): boolean => {
   }
 };
 
+export const isObject = (value: any): boolean =>
+  typeof value === "object" && value !== null;
+
 export const getContentFromUrl = (url: string): Promise<Object> =>
   axios({
     method: "get",
-    url,
-    responseType: "arraybuffer"
+    url
   }).then(response => {
     const { data } = response;
-    return isJSON(data) ? JSON.parse(data) : yaml.safeLoad(data);
+    return isObject(data) ? data : yaml.safeLoad(data);
   });
 
 export const getContent = (fileOrUrl: string): Promise<Object> => {

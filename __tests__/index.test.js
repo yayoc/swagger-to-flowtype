@@ -1,7 +1,13 @@
 import fs from "fs";
 import path from "path";
 import yaml from "js-yaml";
-import { generator } from "../src/index";
+import {
+  generator,
+  isUrl,
+  isJSON,
+  getContentFromUrl,
+  getContentFromFile
+} from "../src/index";
 
 jest.mock("commander", () => ({
   checkRequired: false,
@@ -27,6 +33,61 @@ describe("generate flow types", () => {
       const expected = path.join(__dirname, "__mocks__/expected.json.flow.js");
       const expectedString = fs.readFileSync(expected, "utf8");
       expect(generator(content)).toEqual(expectedString);
+    });
+  });
+});
+
+describe("Utility functions", () => {
+  describe("isURL", () => {
+    it("should return true when value is URL", () => {
+      expect(isUrl("https://sample.com/json")).toEqual(true);
+    });
+
+    it("should return false when value is not URL", () => {
+      expect(isUrl("/Users/foo/sample.json")).toEqual(false);
+    });
+  });
+
+  describe("isJSON", () => {
+    it("should return true when value is JSON", () => {
+      const file = path.join(__dirname, "__mocks__/swagger.json");
+      expect(isJSON(fs.readFileSync(file, "utf8"))).toEqual(true);
+    });
+    it("should return false when value is not JSON", () => {
+      const file = path.join(__dirname, "__mocks__/swagger.yaml");
+      expect(isJSON(fs.readFileSync(file, "utf8"))).toEqual(false);
+    });
+  });
+});
+
+describe("Get content from URL or file", () => {
+  describe("Get content from URL", () => {
+    it("should return object from JSON response", () => {
+      const url =
+        "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/json/uber.json";
+      return getContentFromUrl(url).then(res => {
+        expect(res.swagger).toEqual("2.0");
+      });
+    });
+    it("should return object from yaml response", () => {
+      const url =
+        "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/yaml/uber.yaml";
+      return getContentFromUrl(url).then(res => {
+        expect(res.swagger).toEqual("2.0");
+      });
+    });
+  });
+
+  describe("Get content from file", () => {
+    it("should return object from JSON file", () => {
+      const file = path.join(__dirname, "__mocks__/swagger.json");
+      const content = getContentFromFile(file);
+      expect(content.swagger).toEqual("2.0");
+    });
+    it("should return object from yaml file", () => {
+      const file = path.join(__dirname, "__mocks__/swagger.yaml");
+      const content = getContentFromFile(file);
+      expect(content.swagger).toEqual("2.0");
     });
   });
 });
