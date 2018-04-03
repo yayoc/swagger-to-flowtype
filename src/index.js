@@ -21,9 +21,12 @@ const typeMapping = {
 };
 
 const definitionTypeName = (ref): string => {
-  const re = /#\/definitions\/(.*)/;
+  const re = /#\/definitions\/(.*)|#\/components\/schemas\/(.*)/;
   const found = ref.match(re);
-  return found ? found[1] : "";
+  if (!found) {
+    return "";
+  }
+  return found[1] || found[2];
 };
 
 const stripBrackets = (name: string) => name.replace(/[[\]']+/g, "");
@@ -127,14 +130,21 @@ const propertiesTemplate = (
 };
 
 const generate = (swagger: Object): string => {
-  if (!swagger.definitions) {
+  let defs;
+  if (swagger.definitions) {
+    defs = swagger.definitions;
+  } else if (swagger.components) {
+    defs = swagger.components.schemas;
+  }
+  if (!defs) {
     throw new Error("There is no definition");
   }
-  const g = Object.keys(swagger.definitions)
+
+  const g = Object.keys(defs)
     .reduce((acc: Array<Object>, definitionName: string) => {
       const arr = acc.concat({
         title: stripBrackets(definitionName),
-        properties: propertiesList(swagger.definitions[definitionName])
+        properties: propertiesList(defs[definitionName])
       });
       return arr;
     }, [])
