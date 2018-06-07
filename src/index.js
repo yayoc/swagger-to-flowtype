@@ -46,6 +46,18 @@ const typeFor = (property: any): string => {
   } else if (property.type === "string" && "enum" in property) {
     return property.enum.map(e => `'${e}'`).join(" | ");
   }
+  if (Array.isArray(property.type)) {
+    if (property.type.length == 2 && property.type.includes('null')) {
+      let nonNull = property.type[0];
+      if (nonNull == 'null') {
+        nonNull = property.type[1];
+        if (nonNull == 'null') {
+          throw Error('invalid array type: ' + JSON.stringify(property));
+        }
+      }
+      return "?" + typeMapping[nonNull];
+    }
+  }
   return typeMapping[property.type] || definitionTypeName(property.$ref);
 };
 
