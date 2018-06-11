@@ -158,8 +158,8 @@ const generate = (swagger: Object): string => {
   return g;
 };
 
-export const generator = (content: Object) => {
-  const options = {};
+export const generator = (content: Object, file: string) => {
+  const options = prettier.resolveConfig.sync(file) || {};
   const result = `// @flow\n${generate(content)}`;
   return prettier.format(result, options);
 };
@@ -221,7 +221,7 @@ program
   .action(async file => {
     try {
       const content = await getContent(file);
-      const result = generator(content);
+      const result = generator(content, file);
       const dist = distFile(program, file);
       writeToFile(dist, result);
       console.log(`Generated flow types to ${dist}`);
