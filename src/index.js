@@ -33,7 +33,16 @@ const stripBrackets = (name: string) => name.replace(/[[\]']+/g, "");
 
 const typeFor = (property: any): string => {
   if (property.type === "array") {
-    if ("$ref" in property.items) {
+    if ("oneOf" in property.items) {
+      return `Array<${property.items.oneOf
+        .map(
+          e =>
+            e.type === "object"
+              ? propertiesTemplate(propertiesList(e.items)).replace(/"/g, "")
+              : typeFor(e)
+        )
+        .join(" | ")}>`;
+    } else if ("$ref" in property.items) {
       return `Array<${definitionTypeName(property.items.$ref)}>`;
     } else if (property.items.type === "object") {
       const child = propertiesTemplate(propertiesList(property.items)).replace(
