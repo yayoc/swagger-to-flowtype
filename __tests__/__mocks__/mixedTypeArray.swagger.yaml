@@ -1,0 +1,12 @@
+definitions:
+  Cat:
+    type: object
+    properties:
+      id:
+        type: integer
+  MixedTypeArray:
+    type: array
+    items:
+      oneOf:
+        - $ref: '#/definitions/Cat'
+        - type: string
