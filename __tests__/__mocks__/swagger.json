@@ -183,6 +183,9 @@
             "id": {
               "type": "integer",
               "format": "int64"
+            },
+            "x-dashes-id": {
+              "type": "string"
             }
           }
         }

@@ -10,8 +10,13 @@ definitions:
           type: "object"
           required:
             - requiredProp
+            - x-dashes-id
           properties:
             requiredProp:
               type: string
+            x-dashes-id:
+              type: string
             optionalProp:
+              type: string
+            x-dashes-optional-id:
               type: string

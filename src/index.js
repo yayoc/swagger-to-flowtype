@@ -68,10 +68,11 @@ const propertyKeyForDefinition = (
   propName: string,
   definition: Object
 ): string => {
+  const resolvedPropName = propName.indexOf("-") > 0 ? `'${propName}'` : propName;
   if (program.checkRequired) {
-    return `${propName}${isRequired(propName, definition) ? "" : "?"}`;
+    return `${resolvedPropName}${isRequired(propName, definition) ? "" : "?"}`;
   }
-  return propName;
+  return resolvedPropName;
 };
 
 const propertiesList = (definition: Object) => {

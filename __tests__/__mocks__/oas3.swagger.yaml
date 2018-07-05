@@ -85,6 +85,7 @@ components:
       required:
         - id
         - name
+        - x-dashes-id
       properties:
         id:
           type: integer
@@ -92,6 +93,8 @@ components:
         name:
           type: string
         tag:
+          type: string
+        x-dashes-id:
           type: string
     Pets:
       type: array

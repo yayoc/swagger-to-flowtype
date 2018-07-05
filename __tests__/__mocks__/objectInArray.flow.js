@@ -1,4 +1,9 @@
 // @flow
 export type ObjectInArray = {
-  array: Array<{ requiredProp: string, optionalProp?: string }>
+  array: Array<{
+    requiredProp: string,
+    "x-dashes-id": string,
+    optionalProp?: string,
+    "x-dashes-optional-id"?: string
+  }>
 };
