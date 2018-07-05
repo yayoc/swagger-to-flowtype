@@ -656,6 +656,8 @@ definitions:
       id:
         type: "integer"
         format: "int64"
+      x-dashes-id:
+        type: "string"
       category:
         $ref: "#/definitions/Category"
       name:

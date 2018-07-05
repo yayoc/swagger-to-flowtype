@@ -4,6 +4,8 @@ definitions:
     properties:
       id:
         type: integer
+      x-dashes-id:
+        type: string
   MixedTypeArray:
     type: array
     items:
