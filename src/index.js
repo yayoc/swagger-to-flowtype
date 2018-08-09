@@ -55,6 +55,9 @@ const typeFor = (property: any): string => {
   } else if (property.type === "string" && "enum" in property) {
     return property.enum.map(e => `'${e}'`).join(" | ");
   }
+  if ("allOf" in property) {
+    return property.allOf.map(p => typeFor(p)).join("&");
+  }
   return typeMapping[property.type] || definitionTypeName(property.$ref);
 };
 
@@ -68,7 +71,8 @@ const propertyKeyForDefinition = (
   propName: string,
   definition: Object
 ): string => {
-  const resolvedPropName = propName.indexOf("-") > 0 ? `'${propName}'` : propName;
+  const resolvedPropName =
+    propName.indexOf("-") > 0 ? `'${propName}'` : propName;
   if (program.checkRequired) {
     return `${resolvedPropName}${isRequired(propName, definition) ? "" : "?"}`;
   }
