@@ -54,6 +54,8 @@ const typeFor = (property: any): string => {
     return `Array<${typeMapping[property.items.type]}>`;
   } else if (property.type === "string" && "enum" in property) {
     return property.enum.map(e => `'${e}'`).join(" | ");
+  } else if (Array.isArray(property.type)) {
+    return property.type.map(t => typeMapping[t]).join(" | ");
   }
   if ("allOf" in property) {
     return property.allOf.map(p => typeFor(p)).join("&");
