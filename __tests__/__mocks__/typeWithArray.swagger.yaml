@@ -1,0 +1,10 @@
+definitions:
+  Cat:
+    type: object
+    properties:
+      parentId:
+        type:
+          - integer
+          - 'null'
+    required:
+      - parentId
