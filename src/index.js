@@ -56,6 +56,8 @@ const typeFor = (property: any): string => {
     return property.enum.map(e => `'${e}'`).join(" | ");
   } else if (Array.isArray(property.type)) {
     return property.type.map(t => typeMapping[t]).join(" | ");
+  } else if (property.type === "object") {
+    return propertiesTemplate(propertiesList(property)).replace(/"/g, "");
   }
   if ("allOf" in property) {
     return property.allOf.map(p => typeFor(p)).join("&");

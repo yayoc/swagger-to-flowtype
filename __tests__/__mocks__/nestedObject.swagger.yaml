@@ -1,0 +1,27 @@
+components:
+  schemas:
+    NestedObject:
+      type: "object"
+      required:
+        - nestedProperty
+      properties:
+        nestedProperty:
+          type: object
+          required:
+            - base
+            - special
+          properties:
+            base:
+              $ref: "#/components/schemas/Example"
+            special:
+              $ref: "#/components/schemas/Example"
+    Example:
+      type: "object"
+      required:
+        - value
+        - name
+      properties:
+        value:
+          type: number
+        name:
+          type: string
