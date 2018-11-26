@@ -35,11 +35,10 @@ const typeFor = (property: any): string => {
   if (property.type === "array") {
     if ("oneOf" in property.items) {
       return `Array<${property.items.oneOf
-        .map(
-          e =>
-            e.type === "object"
-              ? propertiesTemplate(propertiesList(e.items)).replace(/"/g, "")
-              : typeFor(e)
+        .map(e =>
+          e.type === "object"
+            ? propertiesTemplate(propertiesList(e.items)).replace(/"/g, "")
+            : typeFor(e)
         )
         .join(" | ")}>`;
     } else if ("$ref" in property.items) {
@@ -56,11 +55,22 @@ const typeFor = (property: any): string => {
     return property.enum.map(e => `'${e}'`).join(" | ");
   } else if (Array.isArray(property.type)) {
     return property.type.map(t => typeMapping[t]).join(" | ");
+  } else if (
+    "allOf" in property ||
+    "oneOf" in property ||
+    "anyOf" in property
+  ) {
+    const discriminator = Object.keys(property)[0];
+    const discriminatorMap = {
+      allOf: "&",
+      oneOf: "|",
+      anyOf: "|"
+    };
+    return property[discriminator]
+      .map(p => typeFor(p))
+      .join(discriminatorMap[discriminator]);
   } else if (property.type === "object") {
     return propertiesTemplate(propertiesList(property)).replace(/"/g, "");
-  }
-  if ("allOf" in property) {
-    return property.allOf.map(p => typeFor(p)).join("&");
   }
   return typeMapping[property.type] || definitionTypeName(property.$ref);
 };

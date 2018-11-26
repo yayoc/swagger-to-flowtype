@@ -96,6 +96,10 @@ components:
           type: string
         x-dashes-id:
           type: string
+        owner:
+          oneOf:
+            - $ref: "#/components/schemas/Person"
+            - $ref: "#/components/schemas/Company"
     Pets:
       type: array
       items:
@@ -110,3 +114,11 @@ components:
           format: int32
         message:
           type: string
+    Person:
+      properties:
+        name: 
+          type: string
+    Company:
+      properties:
+        tax-id:
+          type: number
