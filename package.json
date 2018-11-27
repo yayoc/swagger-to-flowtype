@@ -1,6 +1,6 @@
 {
   "name": "swagger-to-flowtype",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Command line tool for generating flow types from swagger",
   "main": "./dist/index.js",
   "scripts": {
