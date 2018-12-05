@@ -129,7 +129,7 @@ const propertiesList = (definition: Object) => {
 };
 
 const withExact = (property: string): string => {
-  const result = property.replace(/{[^|]/g, "{|").replace(/[^|]}/g, "|}");
+  const result = property.replace(/{[^|}]/g, "{|").replace(/[^|{]}/g, "|}");
   return result;
 };
 

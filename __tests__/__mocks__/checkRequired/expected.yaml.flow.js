@@ -26,7 +26,8 @@ export type Pet = {
   name: string,
   photoUrls: Array<string>,
   tags?: Array<Tag>,
-  status?: "available" | "pending" | "sold"
+  status?: "available" | "pending" | "sold",
+  objectType?: {}
 };
 export type IGenericCollectionPet = { items?: Array<Pet> };
 export type IGenericCollectionString = { items?: Array<string> };
