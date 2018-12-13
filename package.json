@@ -4,8 +4,8 @@
   "description": "Command line tool for generating flow types from swagger",
   "main": "./dist/index.js",
   "scripts": {
-    "init": "mkdir dist",
-    "clean": "rm -rf dist",
+    "init": "mkdirp dist",
+    "clean": "rimraf dist",
     "test": "jest",
     "test:watch": "jest --watch",
     "prebuild": "npm run clean && npm run init",
@@ -52,7 +52,8 @@
     "eslint-plugin-prettier": "^2.1.2",
     "eslint-plugin-react": "^7.1.0",
     "flow-bin": "^0.48.0",
-    "jest": "^20.0.4"
+    "jest": "^20.0.4",
+    "rimraf": "^2.6.2"
   },
   "jest": {
     "testRegex": "(/__tests__/[^__mocks__].*|(\\.|/)(test|spec))\\.jsx?$",
