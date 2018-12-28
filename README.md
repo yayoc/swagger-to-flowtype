@@ -121,6 +121,7 @@ export type Category = { id: number, name: string };
 ## Requirements
 
 **Node 4+ is required**
+**Flow version >= 2.0 is required**
 
 ## Tests
 
