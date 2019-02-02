@@ -218,7 +218,7 @@ export const distFile = (p: Object, inputFileName: string): string => {
 export const getContentFromFile = (file: string): Object => {
   const ext = path.extname(file);
   const readFile = fs.readFileSync(file, "utf8");
-  return ext === ".yaml" ? yaml.safeLoad(readFile) : JSON.parse(readFile);
+  return (ext === ".yaml" || ext === ".yml) ? yaml.safeLoad(readFile) : JSON.parse(readFile);
 };
 
 export const isObject = (value: any): boolean =>
