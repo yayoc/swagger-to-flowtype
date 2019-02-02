@@ -188,7 +188,7 @@ const generate = (swagger: Object): string => {
 
 export const generator = (content: Object, file: string) => {
   const options = prettier.resolveConfig.sync(file) || {};
-  const result = `// @flow\n${generate(content)}`;
+  const result = `// @flow strict\n${generate(content)}`;
   return prettier.format(result, options);
 };
 
