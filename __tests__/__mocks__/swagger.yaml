@@ -576,6 +576,15 @@ securityDefinitions:
     name: "api_key"
     in: "header"
 definitions:
+  VaccinationList:
+    type: object
+    properties:
+      vaccineNames:
+        type:
+          - array
+          - 'null'
+        items:
+          type: string
   Order:
     type: "object"
     properties:

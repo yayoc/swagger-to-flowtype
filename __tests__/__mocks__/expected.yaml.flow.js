@@ -1,4 +1,5 @@
 // @flow
+export type VaccinationList = { vaccineNames: ?Array<*> };
 export type Order = {
   id: number,
   petId: number,
