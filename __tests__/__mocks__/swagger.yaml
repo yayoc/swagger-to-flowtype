@@ -684,6 +684,9 @@ definitions:
         - "available"
         - "pending"
         - "sold"
+
+      objectType:
+        type: "object"
     xml:
       name: "Pet"
   IGenericCollection[Pet]:

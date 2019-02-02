@@ -186,6 +186,9 @@
             },
             "x-dashes-id": {
               "type": "string"
+            },
+            "objectType": {
+              "type": "object"
             }
           }
         }
