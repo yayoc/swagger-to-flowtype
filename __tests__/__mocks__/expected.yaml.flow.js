@@ -1,4 +1,4 @@
-// @flow
+// @flow strict
 export type Order = {
   id: number,
   petId: number,

@@ -1,4 +1,4 @@
-// @flow
+// @flow strict
 export type Pet = {
   id: ?number,
   name: string,

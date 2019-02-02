@@ -1,4 +1,4 @@
-// @flow
+// @flow strict
 export type NestedObject = {
   nestedProperty: { base: Example, special: Example }
 };

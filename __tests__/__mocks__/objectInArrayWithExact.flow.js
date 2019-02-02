@@ -1,4 +1,4 @@
-// @flow
+// @flow strict
 export type ObjectInArray = {|
   array: Array<{|
     requiredProp: string,
