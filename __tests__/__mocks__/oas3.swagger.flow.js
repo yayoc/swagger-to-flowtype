@@ -1,6 +1,6 @@
 // @flow
 export type Pet = {
-  id: number,
+  id: ?number,
   name: string,
   tag?: string,
   "x-dashes-id": string,

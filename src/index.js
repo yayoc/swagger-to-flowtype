@@ -81,6 +81,8 @@ const isRequired = (propertyName: string, definition: Object): boolean => {
   return result;
 };
 
+const isNullable = (property: Object): boolean => property.nullable;
+
 const propertyKeyForDefinition = (
   propName: string,
   definition: Object
@@ -116,10 +118,11 @@ const propertiesList = (definition: Object) => {
     null,
     Object.keys(definition.properties).reduce(
       (properties: Array<Object>, propName: string) => {
+        const property = definition.properties[propName];
         const arr = properties.concat({
-          [propertyKeyForDefinition(propName, definition)]: typeFor(
-            definition.properties[propName]
-          )
+          [propertyKeyForDefinition(propName, definition)]: `${
+            isNullable(property) ? "?" : ""
+          }${typeFor(property)}`
         });
         return arr;
       },
