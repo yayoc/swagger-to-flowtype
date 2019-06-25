@@ -22,9 +22,9 @@ const typeMapping = {
 
 const definitionTypeName = (ref): string => {
   const re = /#\/definitions\/(.*)|#\/components\/schemas\/(.*)/;
-  const found = ref.match(re);
+  const found = ref && ref.match(re);
   if (!found) {
-    return "";
+    return "any";
   }
   return found[1] || found[2];
 };
@@ -60,7 +60,7 @@ const typeFor = (property: any): string => {
     "oneOf" in property ||
     "anyOf" in property
   ) {
-    const discriminator = Object.keys(property)[0];
+    const discriminator = 'allOf' in property ? 'allOf' : 'oneOf' in property ? 'oneOf' : 'anyOf';
     const discriminatorMap = {
       allOf: "&",
       oneOf: "|",
