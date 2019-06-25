@@ -116,7 +116,8 @@ const propertiesList = (definition: Object) => {
   }
   return Object.assign.apply(
     null,
-    Object.keys(definition.properties).reduce(
+      // $FlowFixMe
+      Object.keys(definition.properties).reduce(
       (properties: Array<Object>, propName: string) => {
         const property = definition.properties[propName];
         const arr = properties.concat({
@@ -161,7 +162,7 @@ const propertiesTemplate = (
 };
 
 const generate = (swagger: Object): string => {
-  let defs;
+  let defs: any;
   if (swagger.definitions) {
     defs = swagger.definitions;
   } else if (swagger.components) {
