@@ -20,6 +20,20 @@ const typeMapping = {
   enum: "string"
 };
 
+const flatten = (items: Array<any>) =>  {
+  const flat = [];
+
+  items.forEach(item => {
+    if (Array.isArray(item)) {
+      flat.push(...flatten(item));
+    } else {
+      flat.push(item);
+    }
+  });
+
+  return flat;
+};
+
 const definitionTypeName = (ref): string => {
   const re = /#\/definitions\/(.*)|#\/components\/schemas\/(.*)/;
   const found = ref && ref.match(re);
@@ -146,14 +160,13 @@ const propertiesTemplate = (
   if (Array.isArray(properties)) {
     return properties
       .map(property => {
-        let p = property.$ref ? `& ${property.$ref}` : JSON.stringify(property);
+        let p = property.$ref ? property.$ref : JSON.stringify(property);
         if (!property.$ref && program.exact) {
           p = withExact(p);
         }
         return p;
       })
-      .sort(a => (a[0] === "&" ? 1 : -1))
-      .join(" ");
+      .join(" & ");
   }
   if (program.exact) {
     return withExact(JSON.stringify(properties));
@@ -181,6 +194,10 @@ const generate = (swagger: Object): string => {
       return arr;
     }, [])
     .map(definition => {
+      if (Array.isArray(definition.properties)) {
+        definition.properties = flatten(definition.properties);
+      }
+
       const s = `export type ${definition.title} = ${propertiesTemplate(
         definition.properties
       ).replace(/"/g, "")};`;
