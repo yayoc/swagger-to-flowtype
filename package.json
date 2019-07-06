@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "camelize": "^1.0.0",
     "commander": "^2.9.0",
     "js-yaml": "^3.8.4",
     "prettier": "^1.11.0"
