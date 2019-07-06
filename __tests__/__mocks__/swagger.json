@@ -187,6 +187,9 @@
             "x-dashes-id": {
               "type": "string"
             },
+            "snake_case_id": {
+              "type": "string"
+            },
             "objectType": {
               "type": "object"
             }
