@@ -52,6 +52,26 @@ export type NewPet = {
 }
 ```
 
+*`Transform property key to lower camel case`*
+
+`--lower-camel-case` option transforms each property keys to lower camel case.
+
+```json
+"Cat": {
+  "type": "object",
+  "properties": {
+    "long_long_key": {
+      "type": "string"
+    }
+  }
+}
+```
+
+will be
+
+```js
+export type Cat = { longLongKey?: string };
+```
 
 ## Example
 

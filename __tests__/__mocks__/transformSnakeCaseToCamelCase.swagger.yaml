@@ -1,0 +1,42 @@
+components:
+  schemas:
+    Cat:
+      type: object
+      required:
+        - required_snake_case_id
+      properties:
+        id:
+          type: integer
+        camelCaseId:
+          type: string
+        x-dashes-id:
+          type: string
+        snake_case_id:
+          type: string
+        required_snake_case_id:
+          type: string
+    Dog:
+      type: object
+      required:
+        - nested_property
+      properties:
+        nested_property:
+          type: object
+          required:
+            - required_snake_case_id
+          properties:
+            snake_case_id:
+              type: string
+            required_snake_case_id:
+              type: string
+            category:
+              $ref: "#/components/schemas/Category"
+    Category:
+      type: object
+      required:
+        - required_snake_case_value
+      properties:
+        snake_case_value:
+          type: number
+        required_snake_case_value:
+          type: number

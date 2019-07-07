@@ -21,8 +21,8 @@ export type User = {
 export type Tag = { id: number, name: string };
 export type Pet = {
   id: number,
-  "x-dashes-id": string,
-  snake_case_id: string,
+  xDashesId: string,
+  snakeCaseId: string,
   category: Category,
   name: string,
   photoUrls: Array<string>,

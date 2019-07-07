@@ -658,6 +658,8 @@ definitions:
         format: "int64"
       x-dashes-id:
         type: "string"
+      snake_case_id:
+        type: "string"
       category:
         $ref: "#/definitions/Category"
       name:
