@@ -131,7 +131,7 @@ export type Order = {
   petId: number,
   quantity: number,
   shipDate: string,
-  status: string,
+  status: 'placed' | 'approved' | 'delivered',
   complete: boolean
 };
 export type Category = { id: number, name: string };
