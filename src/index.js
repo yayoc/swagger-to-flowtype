@@ -112,6 +112,11 @@ const propertiesList = (definition: Object) => {
     return typeFor(definition);
   }
 
+  if(definition.additionalProperties) {
+    const mapValueType = definition.additionalProperties.type;
+    return `Map<string,${mapValueType}>`;
+  }
+
   if (
     !definition.properties ||
     Object.keys(definition.properties).length === 0
