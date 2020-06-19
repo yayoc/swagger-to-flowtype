@@ -4,11 +4,8 @@
   "description": "Command line tool for generating flow types definitions from OpenAPI 3.0 specification",
   "main": "./dist/index.js",
   "scripts": {
-    "init": "mkdirp dist",
-    "clean": "rimraf dist",
     "test": "jest",
     "test:watch": "jest --watch",
-    "prebuild": "npm run clean && npm run init",
     "build": "babel ./src -d ./dist",
     "flow:check": "flow check",
     "flow:status": "flow status",
@@ -55,9 +52,7 @@
   "devDependencies": {
     "@vlsergey/babel-config": "^0.7.0",
     "@vlsergey/eslint-config": "^0.7.0",
-    "flow-bin": "^0.127.0",
-    "jest": "^26.0.1",
-    "rimraf": "^3.0.2"
+    "jest": "^26.0.1"
   },
   "jest": {
     "testRegex": "(/test/[^__mocks__].*|(\\.|/)(test|spec))\\.jsx?$",
