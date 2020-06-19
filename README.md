@@ -1,16 +1,16 @@
-# swagger-to-flowtype
+# openapi-to-flowtype
 
-`swagger-to-flowtype` is a tool for generating type definitions of [Flow](https://flow.org/) from swagger file.
+`openapi-to-flowtype` is a tool for generating type definitions of [Flow](https://flow.org/) from OpenAPI 3.0 file.
 
 ## Getting started
 
 #### Install package
 
-`npm i -g swagger-to-flowtype`
+`npm i -g openapi-to-flowtype`
 
 #### Generating flow type definitions
 
-`$swagger-to-flowtype <YOUR SWAGGER FILE OR URL>`
+`$openapi-to-flowtype <YOUR SWAGGER FILE OR URL>`
 
 This command generates a file named **flowtype.js** includes type definitions as default.  
 
@@ -20,11 +20,11 @@ This command generates a file named **flowtype.js** includes type definitions as
 
 You can also specify an output path with `-d option`.
 
-`$swagger-to-flowtype <YOUR SWAGGER FILE PATH OR URL> -d <OUTPUT FILE PATH>` 
+`$openapi-to-flowtype <YOUR SWAGGER FILE PATH OR URL> -d <OUTPUT FILE PATH>`
 
 *`Supporting Maybe type`*
 
-If you pass a `--check-required` option, `swagger-to-flowtype` will check `required field` on your swagger file, then output flow definitions with Maybe type.
+If you pass a `--check-required` option, `openapi-to-flowtype` will check `required field` on your swagger file, then output flow definitions with Maybe type.
 
 ```json
 "NewPet": {
@@ -75,7 +75,7 @@ export type Cat = { longLongKey?: string };
 
 ## Example
 
-swagger file like following 
+swagger file like following
 
 ```yaml
 ...
@@ -145,4 +145,3 @@ export type Category = { id: number, name: string };
 ## Tests
 
 `npm test`
-

@@ -1,6 +1,0 @@
-// Place your settings in this file to overwrite default and user settings.
-{
-  "eslint.options": { "configFile": ".eslintrc" },
-  "flow.useNPMPackagedFlow": true,
-  "javascript.validate.enable": false
-}

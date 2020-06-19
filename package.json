@@ -1,7 +1,7 @@
 {
-  "name": "swagger-to-flowtype",
+  "name": "openapi-to-flowtype",
   "version": "0.3.0",
-  "description": "Command line tool for generating flow types from swagger",
+  "description": "Command line tool for generating flow types definitions from OpenAPI 3.0 specification",
   "main": "./dist/index.js",
   "scripts": {
     "init": "mkdirp dist",
@@ -10,54 +10,61 @@
     "test:watch": "jest --watch",
     "prebuild": "npm run clean && npm run init",
     "build": "babel ./src -d ./dist",
-    "prepublish": "npm run build",
-    "flow": "flow",
-    "prettier": "prettier --write {src,__{tests,mocks}__}/**/*.js"
+    "flow:check": "flow check",
+    "flow:status": "flow status",
+    "eslint:check": "eslint --ignore-pattern \"!.eslintrc.js\" --ignore-pattern \"**/*.flow.js\" .eslintrc.js babel.config.js src/**/*.js test/**/*.js",
+    "eslint:fix": "eslint --ignore-pattern \"!.eslintrc.js\" --ignore-pattern \"**/*.flow.js\" --fix .eslintrc.js babel.config.js src/**/*.js test/**/*.js",
+    "prepublish": "npm run eslint:fix && npm run flow:check && npm run test && npm run build",
+    "postversion": "git push && git push --tags"
   },
-  "author": "yayoc <hi@yayoc.com> (http://yayoc.com)",
+  "authors": "Sergey Vladimirov <vlsergey@gmail.com>",
+  "contributors": [
+    {
+      "name": "yayoc",
+      "email": "hi@yayoc.com",
+      "url": "http://yayoc.com"
+    }
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yayoc/swagger-to-flowtype.git"
+    "url": "git+https://github.com/vlsergey/openapi-to-flowtype.git"
   },
   "bugs": {
-    "url": "https://github.com/yayoc/swagger-to-flowtype/issues"
+    "url": "https://github.com/vlsergey/openapi-to-flowtype/issues"
   },
-  "homepage": "https://github.com/yayoc/swagger-to-flowtype#readme",
+  "homepage": "https://github.com/vlsergey/openapi-to-flowtype#readme",
   "keywords": [
     "flow",
-    "swagger"
+    "swagger",
+    "openapi"
   ],
   "bin": {
-    "swagger-to-flowtype": "./dist/index.js"
+    "openapi-to-flowtype": "./dist/index.js"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "camelize": "^1.0.0",
-    "commander": "^2.9.0",
+    "commander": "^2.20.3",
+    "core-js": "^3.6.5",
     "js-yaml": "^3.8.4",
-    "prettier": "^1.11.0"
+    "prettier": "^2.0.5",
+    "regenerator-runtime": "^0.13.5"
   },
   "devDependencies": {
+    "@vlsergey/babel-config": "^0.7.0",
+    "@vlsergey/eslint-config": "^0.7.0",
     "babel-cli": "^6.24.1",
-    "babel-eslint": "^7.2.3",
+    "babel-eslint": "^10.1.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-flow": "^6.23.0",
-    "eslint": "^4.18.2",
-    "eslint-config-airbnb": "^15.0.1",
-    "eslint-config-prettier": "^2.3.0",
-    "eslint-plugin-flowtype": "^2.35.0",
-    "eslint-plugin-import": "^2.3.0",
-    "eslint-plugin-jsx-a11y": "^5.0.3",
-    "eslint-plugin-prettier": "^2.1.2",
-    "eslint-plugin-react": "^7.1.0",
-    "flow-bin": "^0.48.0",
-    "jest": "^20.0.4",
-    "rimraf": "^2.6.2"
+    "flow-bin": "^0.127.0",
+    "jest": "^26.0.1",
+    "rimraf": "^3.0.2"
   },
   "jest": {
-    "testRegex": "(/__tests__/[^__mocks__].*|(\\.|/)(test|spec))\\.jsx?$",
+    "testRegex": "(/test/[^__mocks__].*|(\\.|/)(test|spec))\\.jsx?$",
     "collectCoverageFrom": [
       "src/index.js"
     ],
