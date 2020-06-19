@@ -14,7 +14,8 @@
     "flow:status": "flow status",
     "eslint:check": "eslint --ignore-pattern \"!.eslintrc.js\" --ignore-pattern \"**/*.flow.js\" .eslintrc.js babel.config.js src/**/*.js test/**/*.js",
     "eslint:fix": "eslint --ignore-pattern \"!.eslintrc.js\" --ignore-pattern \"**/*.flow.js\" --fix .eslintrc.js babel.config.js src/**/*.js test/**/*.js",
-    "prepublish": "npm run eslint:fix && npm run flow:check && npm run test && npm run build",
+    "preversion": "npm run eslint:fix && npm run flow:check && npm run test && npm run build",
+    "version": "npm publish --access=public",
     "postversion": "git push && git push --tags"
   },
   "authors": "Sergey Vladimirov <vlsergey@gmail.com>",
