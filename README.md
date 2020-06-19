@@ -145,3 +145,6 @@ export type Category = { id: number, name: string };
 ## Tests
 
 `npm test`
+
+# Testimonials
+Base on [swagger-to-flowtype](https://github.com/yayoc/swagger-to-flowtype) by [yayoc](http://yayoc.com).
