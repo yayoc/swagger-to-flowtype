@@ -232,7 +232,7 @@
                   "type":"string"
                },
                "category":{
-                 "$ref": "#/definitions/Category"
+                 "$ref": "#/components/schemas/Category"
                }
             }
          },

@@ -26,6 +26,12 @@ You can also specify an output path with `-d option`.
 
 `$openapi-to-flowtype <YOUR SWAGGER FILE PATH OR URL> -d <OUTPUT FILE PATH>`
 
+*`Specify a suffix for generated types`*
+
+You can specify a suffix for all generated types with `--suffix <suffix>`.
+
+`$openapi-to-flowtype <YOUR SWAGGER FILE PATH OR URL> -suffix <YOUR SUFFIX>`
+
 *`Transform property key to lower camel case`*
 
 `--lower-camel-case` option transforms each property keys to lower camel case.

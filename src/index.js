@@ -5,8 +5,8 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
 import axios from 'axios';
-import camelize from 'camelize';
 import fs from 'fs';
+import Generator from './Generator';
 import path from 'path';
 import prettier from 'prettier';
 import program from 'commander';
@@ -16,194 +16,19 @@ export const DEFAULT_PRETTIER_OPTIONS = {
   parser: 'babel',
 };
 
-// Swagger data types are base on types supported by the JSON-Scheme Draft4.
-const typeMapping = {
-  array: 'Array<*>',
-  boolean: 'boolean',
-  integer: 'number',
-  number: 'number',
-  null: 'null',
-  object: 'Object',
-  Object: 'Object',
-  string: 'string',
-  enum: 'string',
-};
+export const generator = ( specification : Object, file : string ) => {
+  const generator : Generator = new Generator();
+  generator.exact = program.exact || generator.exact;
+  generator.lowerCamelCase = program.lowerCamelCase || generator.lowerCamelCase;
+  generator.suffix = program.suffix || generator.suffix;
 
-const definitionTypeName = ( ref : string ) => {
-  const re = /#\/definitions\/(.*)|#\/components\/schemas\/(.*)/;
-  const found = ref.match( re );
-  if ( !found ) {
-    return '';
-  }
-  return found[ 1 ] || found[ 2 ];
-};
+  const result : string = generator.generate( specification );
 
-const stripBrackets = ( name : string ) => name.replace( /[[\]']+/g, '' );
-
-const typeFor = ( property : any ) : string => {
-  if ( property.type === 'array' ) {
-    if ( 'oneOf' in property.items ) {
-      return `Array<${property.items.oneOf
-        .map( e =>
-          e.type === 'object'
-            ? propertiesTemplate( propertiesList( e.items ) ).replace( /"/g, '' )
-            : typeFor( e )
-        )
-        .join( ' | ' )}>`;
-    } else if ( '$ref' in property.items ) {
-      return `Array<${definitionTypeName( property.items.$ref )}>`;
-    } else if ( property.items.type === 'object' ) {
-      const child = propertiesTemplate( propertiesList( property.items ) ).replace(
-        /"/g,
-        ''
-      );
-      return `Array<${child}>`;
-    }
-    return `Array<${typeMapping[ property.items.type ]}>`;
-  } else if ( property.type === 'string' && 'enum' in property ) {
-    return property.enum.map( e => `'${e}'` ).join( ' | ' );
-  } else if ( Array.isArray( property.type ) ) {
-    return property.type.map( t => typeMapping[ t ] ).join( ' | ' );
-  } else if (
-    'allOf' in property ||
-    'oneOf' in property ||
-    'anyOf' in property
-  ) {
-    const discriminator = Object.keys( property )[ 0 ];
-    const discriminatorMap = {
-      allOf: '&',
-      oneOf: '|',
-      anyOf: '|',
-    };
-    return property[ discriminator ]
-      .map( p => typeFor( p ) )
-      .join( discriminatorMap[ discriminator ] );
-  } else if ( property.type === 'object' ) {
-    return propertiesTemplate( propertiesList( property ) ).replace( /"/g, '' );
-  }
-  return typeMapping[ property.type ] || definitionTypeName( property.$ref );
-};
-
-const isRequired = ( propertyName : string, definition : Object ) : boolean => {
-  const result =
-    definition.required && definition.required.indexOf( propertyName ) >= 0;
-  return result;
-};
-
-const isNullable = ( property : Object ) : boolean => property.nullable;
-
-const propertyKeyForDefinition = (
-  propName : string,
-  definition : Object
-) : string => {
-  let resolvedPropName = propName.indexOf( '-' ) > 0 ? `'${propName}'` : propName;
-  if ( program.lowerCamelCase ) {
-    resolvedPropName = camelize( resolvedPropName );
-  }
-  return `${resolvedPropName}${isRequired( propName, definition ) ? '' : '?'}`;
-};
-
-const propertiesList = ( definition : Object ) => {
-  if ( 'allOf' in definition ) {
-    return definition.allOf.map( propertiesList );
-  }
-
-  if ( definition.$ref ) {
-    return { $ref: definitionTypeName( definition.$ref ) };
-  }
-
-  if ( 'type' in definition && definition.type !== 'object' ) {
-    return typeFor( definition );
-  }
-
-  if (
-    !definition.properties ||
-    Object.keys( definition.properties ).length === 0
-  ) {
-    return {};
-  }
-  // TODO: change to ES6
-  return Object.assign.apply(
-    null,
-    // $FlowFixMe
-    Object.keys( definition.properties ).reduce(
-      ( properties : Object[], propName : string ) => {
-        const property = definition.properties[ propName ];
-        const arr = properties.concat( {
-          [ propertyKeyForDefinition( propName, definition ) ]: `${
-            isNullable( property ) ? '?' : ''
-          }${typeFor( property )}`,
-        } );
-        return arr;
-      },
-      [ {} ]
-    )
-  );
-};
-
-const withExact = ( property : string ) : string => {
-  const result = property.replace( /{[^|}]/g, '{|' ).replace( /[^|{]}/g, '|}' );
-  return result;
-};
-
-const propertiesTemplate = ( properties : Object | Object[] | string ) : string => {
-  if ( typeof properties === 'string' ) {
-    return properties;
-  }
-  if ( Array.isArray( properties ) ) {
-    return properties
-      .map( property => {
-        let p = property.$ref ? `& ${property.$ref}` : JSON.stringify( property );
-        if ( !property.$ref && program.exact ) {
-          p = withExact( p );
-        }
-        return p;
-      } )
-      .sort( a => ( a[ 0 ] === '&' ? 1 : -1 ) )
-      .join( ' ' );
-  }
-  if ( program.exact ) {
-    return withExact( JSON.stringify( properties ) );
-  }
-  return JSON.stringify( properties );
-};
-
-const generate = ( swagger : Object ) : string => {
-  let defs : any;
-  if ( swagger.definitions ) {
-    defs = swagger.definitions;
-  } else if ( swagger.components ) {
-    defs = swagger.components.schemas;
-  }
-  if ( !defs ) {
-    throw new Error( 'There is no definition' );
-  }
-
-  const g = Object.keys( defs )
-    .reduce( ( acc : Object[], definitionName : string ) => {
-      const arr = acc.concat( {
-        title: stripBrackets( definitionName ),
-        properties: propertiesList( defs[ definitionName ] ),
-      } );
-      return arr;
-    }, [] )
-    .map( definition => {
-      const s = `export type ${definition.title} = ${propertiesTemplate(
-        definition.properties
-      ).replace( /"/g, '' )};`;
-      return s;
-    } )
-    .join( ' ' );
-  return g;
-};
-
-export const generator = ( content : Object, file : string ) => {
-  const options = {
+  const prettierOptions : any = {
     ...DEFAULT_PRETTIER_OPTIONS,
     ...( prettier.resolveConfig.sync( file ) || {} )
   };
-  const result = `// @flow strict\n${generate( content )}`;
-  return prettier.format( result, options );
+  return prettier.format( result, prettierOptions );
 };
 
 export const writeToFile = ( dist : string = './flowtype.js', result : string ) => {
@@ -261,6 +86,7 @@ program
   .arguments( '<file>' )
   .option( '-d --destination <destination>', 'Destination path' )
   .option( '-e --exact', 'Add exact types' )
+  .option( '--suffix <suffix>', 'Add suffix (like "Type") to all generated types' )
   .option(
     '-l --lower-camel-case',
     'Transform property keys to lower camel case'

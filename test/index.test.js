@@ -5,7 +5,6 @@ import prettier from 'prettier';
 import yaml from 'js-yaml';
 
 jest.mock( 'commander', () => ( {
-  checkRequired: false,
   arguments: jest.fn().mockReturnThis(),
   option: jest.fn().mockReturnThis(),
   action: jest.fn().mockReturnThis(),
@@ -13,7 +12,7 @@ jest.mock( 'commander', () => ( {
 } ) );
 
 describe( 'generate flow types', () => {
-  describe( 'without --check-required', () => {
+  describe( 'with default settings', () => {
     it( 'should generate expected flow types', () => {
       const file = path.join( __dirname, '__mocks__/openapi.yaml' );
       const content = yaml.safeLoad( fs.readFileSync( file, 'utf8' ) );
