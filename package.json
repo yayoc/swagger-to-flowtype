@@ -42,9 +42,9 @@
     "openapi-to-flowtype": "./dist/index.js"
   },
   "dependencies": {
-    "axios": "^0.18.1",
+    "axios": "^0.19.2",
     "camelize": "^1.0.0",
-    "commander": "^2.20.3",
+    "commander": "^5.1.0",
     "core-js": "^3.6.5",
     "js-yaml": "^3.8.4",
     "prettier": "^2.0.5",
