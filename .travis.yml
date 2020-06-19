@@ -1,13 +1,4 @@
 language: node_js
 node_js:
-- '6'
-- '5'
-- '4'
-- 4.4.3
-deploy:
-  provider: npm
-  email: hi@yayoc.com
-  api_key:
-    secure: I+FYbYbptDakv6XlWX1lf2Dfuw4e11wvkxEDKvbKqDAzEgDAeq87tbE772kuy7uCC+NlmFznGABkeFcTHEqK5jWvfgBdRDtmijy5yqU6gQ8xbgncrYfZClhwc85TpPyA757usdLu+JRgxNzVXJ5lQFYPLmWXow1RoTFNR+wrY4PEly3ZmrKjV6HyI9URxSm6FBq5Wmh0KwIhVUq8YuMc5M/bDQn6NaOemK7ii8v1Rv+n/LE+Tj73tEqJz35MZe6dn9AjUxeg9N3+ZaEnzRv6xvL/uQ5q5cRNflle73tFVH8155H+vrF7vbHWfzcTG0Di/Ey4OGIxoEQpk/whLuQwrPA1RSjmMb2iW1ISubKL2o2bDEZjMYwL+0lVidbeCqfpbIToBdh+tEjTc3CBShmNxNglz1BPzrcW6vGBlxBtUXAYjrWvZyApSu2Aayx8P4qZz863kzI2oAwG8cs6e1U4Tge2SnR3zyEGvHFbECdcJUZJDtI/S4v+MIoMpHg7Dwk9nfvL55zRz6emhAZHbmcMnbDcjvwg1zmayqXx17CqCfBb0s4AbmAL+KX8hvWnJ0etm5ppj0cv/6Ajp+9wUparItz4KshYum1a7RlqAKPSZz/ZXzCOn05fbPh/sd2cxfMpi4ADFSpPdUrvCNRI9JoBLGd5Pq/zeD80qZ6xEJT1clU=
-  on:
-    tags: true
+- '12'
+- 'node'
