@@ -1,6 +1,0 @@
-definitions:
-  Cat:
-    type: object
-    properties:
-      x-dashes-id:
-        type: integer

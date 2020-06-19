@@ -16,7 +16,7 @@ jest.mock( 'commander', () => ( {
 describe( 'generate flow types', () => {
   describe( 'parse objct in array', () => {
     it( 'should generate expected flow types', () => {
-      const file = path.join( __dirname, '__mocks__/objectInArray.swagger.yaml' );
+      const file = path.join( __dirname, '__mocks__/objectInArray.openapi.yaml' );
       const content = yaml.safeLoad( fs.readFileSync( file, 'utf8' ) );
       const expected = path.join(
         __dirname,

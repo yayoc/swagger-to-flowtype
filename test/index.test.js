@@ -15,15 +15,15 @@ jest.mock( 'commander', () => ( {
 describe( 'generate flow types', () => {
   describe( 'without --check-required', () => {
     it( 'should generate expected flow types', () => {
-      const file = path.join( __dirname, '__mocks__/swagger.yaml' );
+      const file = path.join( __dirname, '__mocks__/openapi.yaml' );
       const content = yaml.safeLoad( fs.readFileSync( file, 'utf8' ) );
       const expected = path.join( __dirname, '__mocks__/expected.yaml.flow.js' );
       const expectedString = prettier.format( fs.readFileSync( expected, 'utf8' ), DEFAULT_PRETTIER_OPTIONS );
       expect( generator( content ) ).toEqual( expectedString );
     } );
 
-    it( 'should generate expected flow types from swagger.json', () => {
-      const file = path.join( __dirname, '__mocks__/swagger.json' );
+    it( 'should generate expected flow types from openapi.json', () => {
+      const file = path.join( __dirname, '__mocks__/openapi.json' );
       const content = JSON.parse( fs.readFileSync( file, 'utf8' ) );
       const expected = path.join( __dirname, '__mocks__/expected.json.flow.js' );
       const expectedString = prettier.format( fs.readFileSync( expected, 'utf8' ), DEFAULT_PRETTIER_OPTIONS );
@@ -64,14 +64,14 @@ describe( 'Get content from URL or file', () => {
 
   describe( 'Get content from file', () => {
     it( 'should return object from JSON file', () => {
-      const file = path.join( __dirname, '__mocks__/swagger.json' );
+      const file = path.join( __dirname, '__mocks__/openapi.json' );
       const content = getContentFromFile( file );
-      expect( content.swagger ).toEqual( '2.0' );
+      expect( content.openapi ).toEqual( '3.0.1' );
     } );
     it( 'should return object from yaml file', () => {
-      const file = path.join( __dirname, '__mocks__/swagger.yaml' );
+      const file = path.join( __dirname, '__mocks__/openapi.yaml' );
       const content = getContentFromFile( file );
-      expect( content.swagger ).toEqual( '2.0' );
+      expect( content.openapi ).toEqual( '3.0.1' );
     } );
   } );
 } );

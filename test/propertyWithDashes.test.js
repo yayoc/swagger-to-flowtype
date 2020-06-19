@@ -17,7 +17,7 @@ describe( 'generate flow types', () => {
     it( 'should generate expected flow types', () => {
       const file = path.join(
         __dirname,
-        '__mocks__/propertyWithDashes.swagger.yaml'
+        '__mocks__/propertyWithDashes.openapi.yaml'
       );
       const content = yaml.safeLoad( fs.readFileSync( file, 'utf8' ) );
       const expected = path.join(

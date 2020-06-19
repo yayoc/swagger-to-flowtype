@@ -1,0 +1,7 @@
+components:
+  schemas:
+    enumOnRoot:
+      type: string
+      enum:
+      - hoge
+      - piyo

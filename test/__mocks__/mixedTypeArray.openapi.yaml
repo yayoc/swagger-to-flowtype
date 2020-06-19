@@ -1,0 +1,16 @@
+openapi: "3.0.1"
+components:
+  schemas:
+    Cat:
+      type: object
+      properties:
+        id:
+          type: integer
+        x-dashes-id:
+          type: string
+    MixedTypeArray:
+      type: array
+      items:
+        oneOf:
+          - $ref: '#/components/schemas/Cat'
+          - type: string

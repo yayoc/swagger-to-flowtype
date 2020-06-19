@@ -15,7 +15,7 @@ jest.mock( 'commander', () => ( {
 describe( 'generate flow types', () => {
   describe( 'with --check-required', () => {
     it( 'should generate expected flow types', () => {
-      const file = path.join( __dirname, '__mocks__/swagger.yaml' );
+      const file = path.join( __dirname, '__mocks__/openapi.yaml' );
       const content = yaml.safeLoad( fs.readFileSync( file, 'utf8' ) );
       const expected = path.join(
         __dirname,
@@ -25,8 +25,8 @@ describe( 'generate flow types', () => {
       expect( generator( content ) ).toEqual( expectedString );
     } );
 
-    it( 'should generate expected flow types from swagger.json', () => {
-      const file = path.join( __dirname, '__mocks__/swagger.json' );
+    it( 'should generate expected flow types from openapi.json', () => {
+      const file = path.join( __dirname, '__mocks__/openapi.json' );
       const content = JSON.parse( fs.readFileSync( file, 'utf8' ) );
       const expected = path.join(
         __dirname,

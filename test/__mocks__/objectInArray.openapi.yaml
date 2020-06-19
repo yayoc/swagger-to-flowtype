@@ -1,0 +1,23 @@
+components:
+  schemas:
+    ObjectInArray:
+      required:
+      - array
+      type: object
+      properties:
+        array:
+          type: array
+          items:
+            required:
+            - requiredProp
+            - x-dashes-id
+            type: object
+            properties:
+              requiredProp:
+                type: string
+              x-dashes-id:
+                type: string
+              optionalProp:
+                type: string
+              x-dashes-optional-id:
+                type: string

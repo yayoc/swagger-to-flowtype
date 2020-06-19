@@ -18,7 +18,7 @@ describe( 'generate flow types', () => {
     it( 'should generate expected flow types', () => {
       const file = path.join(
         __dirname,
-        '__mocks__/transformSnakeCaseToCamelCase.swagger.yaml'
+        '__mocks__/transformSnakeCaseToCamelCase.openapi.yaml'
       );
       const content = yaml.safeLoad( fs.readFileSync( file, 'utf8' ) );
       const expected = path.join(

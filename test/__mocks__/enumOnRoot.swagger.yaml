@@ -1,6 +1,0 @@
-definitions:
-  enumOnRoot:
-    type: string
-    enum:
-      - hoge
-      - piyo

@@ -15,9 +15,9 @@ jest.mock( 'commander', () => ( {
 describe( 'generate flow types', () => {
   describe( 'parse oas3 document', () => {
     it( 'should generate expected flow types', () => {
-      const file = path.join( __dirname, '__mocks__/oas3.swagger.yaml' );
+      const file = path.join( __dirname, '__mocks__/oas3.openapi.yaml' );
       const content = yaml.safeLoad( fs.readFileSync( file, 'utf8' ) );
-      const expected = path.join( __dirname, '__mocks__/oas3.swagger.flow.js' );
+      const expected = path.join( __dirname, '__mocks__/oas3.openapi.flow.js' );
       const expectedString = prettier.format( fs.readFileSync( expected, 'utf8' ), DEFAULT_PRETTIER_OPTIONS );
       expect( generator( content ) ).toEqual( expectedString );
     } );
