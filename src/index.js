@@ -100,10 +100,7 @@ const propertyKeyForDefinition = (
   if ( program.lowerCamelCase ) {
     resolvedPropName = camelize( resolvedPropName );
   }
-  if ( program.checkRequired ) {
-    return `${resolvedPropName}${isRequired( propName, definition ) ? '' : '?'}`;
-  }
-  return resolvedPropName;
+  return `${resolvedPropName}${isRequired( propName, definition ) ? '' : '?'}`;
 };
 
 const propertiesList = ( definition : Object ) => {
@@ -263,7 +260,6 @@ export const getContent = ( fileOrUrl : string ) : Promise< Object > => {
 program
   .arguments( '<file>' )
   .option( '-d --destination <destination>', 'Destination path' )
-  .option( '-cr --check-required', 'Add question mark to optional properties' )
   .option( '-e --exact', 'Add exact types' )
   .option(
     '-l --lower-camel-case',

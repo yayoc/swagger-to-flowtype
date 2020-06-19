@@ -26,36 +26,6 @@ You can also specify an output path with `-d option`.
 
 `$openapi-to-flowtype <YOUR SWAGGER FILE PATH OR URL> -d <OUTPUT FILE PATH>`
 
-*`Supporting Maybe type`*
-
-If you pass a `--check-required` option, `openapi-to-flowtype` will check `required field` on your swagger file, then output flow definitions with Maybe type.
-
-```json
-"NewPet": {
-  "type": "object",
-  "required": [
-    "name"
-  ],
-  "properties": {
-    "name": {
-      "type": "string"
-    },
-    "tag": {
-      "type": "string"
-    }
-  }
-}
-```
-
-will be
-
-```js
-export type NewPet = {
-  name: string,
-  tag?: string
-}
-```
-
 *`Transform property key to lower camel case`*
 
 `--lower-camel-case` option transforms each property keys to lower camel case.
@@ -132,14 +102,14 @@ Output will be like below
 ```js
 // @flow
 export type Order = {
-  id: number,
-  petId: number,
-  quantity: number,
-  shipDate: string,
-  status: 'placed' | 'approved' | 'delivered',
-  complete: boolean
+  id?: number,
+  petId?: number,
+  quantity?: number,
+  shipDate?: string,
+  status?: 'placed' | 'approved' | 'delivered',
+  complete?: boolean
 };
-export type Category = { id: number, name: string };
+export type Category = { id?: number, name?: string };
 
 ```
 
