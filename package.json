@@ -3,6 +3,7 @@
   "version": "0.4.1",
   "description": "Command line tool for generating flow types definitions from OpenAPI 3.0 specification",
   "main": "./dist/index.js",
+  "browserslist": "node 12",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",

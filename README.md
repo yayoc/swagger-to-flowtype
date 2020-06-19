@@ -139,8 +139,7 @@ export type Category = { id: number, name: string };
 ```
 
 ## Requirements
-
-**Node 4+ is required**
+* Node 12+ is required
 
 ## Tests
 
