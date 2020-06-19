@@ -55,11 +55,6 @@
   "devDependencies": {
     "@vlsergey/babel-config": "^0.7.0",
     "@vlsergey/eslint-config": "^0.7.0",
-    "babel-cli": "^6.24.1",
-    "babel-eslint": "^10.1.0",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-flow": "^6.23.0",
     "flow-bin": "^0.127.0",
     "jest": "^26.0.1",
     "rimraf": "^3.0.2"

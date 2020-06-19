@@ -29,7 +29,7 @@ const typeMapping = {
   enum: 'string',
 };
 
-const definitionTypeName = ( ref ) : string => {
+const definitionTypeName = ( ref : string ) => {
   const re = /#\/definitions\/(.*)|#\/components\/schemas\/(.*)/;
   const found = ref.match( re );
   if ( !found ) {
