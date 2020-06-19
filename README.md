@@ -2,6 +2,10 @@
 
 `openapi-to-flowtype` is a tool for generating type definitions of [Flow](https://flow.org/) from OpenAPI 3.0 file.
 
+[![NPM version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url]
+[![Downloads][downloads-image]][downloads-url]
+
 ## Getting started
 
 #### Install package
@@ -146,4 +150,11 @@ export type Category = { id: number, name: string };
 `npm test`
 
 # Testimonials
-Base on [swagger-to-flowtype](https://github.com/yayoc/swagger-to-flowtype) by [yayoc](http://yayoc.com).
+Based on [swagger-to-flowtype](https://github.com/yayoc/swagger-to-flowtype) by [yayoc](http://yayoc.com).
+
+[npm-image]: https://img.shields.io/npm/v/openapi-to-flowtype.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/openapi-to-flowtype
+[travis-image]: https://travis-ci.com/vlsergey/openapi-to-flowtype.svg?branch=master
+[travis-url]: https://travis-ci.com/vlsergey/openapi-to-flowtype
+[downloads-image]: http://img.shields.io/npm/dm/openapi-to-flowtype.svg?style=flat-square
+[downloads-url]: https://npmjs.org/package/openapi-to-flowtype
