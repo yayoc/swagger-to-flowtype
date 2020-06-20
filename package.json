@@ -1,6 +1,6 @@
 {
   "name": "@nonblocking/swagger-to-flowtype",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Command line tool for generating flow types from swagger",
   "main": "./dist/index.js",
   "scripts": {
