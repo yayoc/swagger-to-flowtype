@@ -104,12 +104,15 @@ const propertyKeyForDefinition = (
   const resolvedPropName =
     propName.indexOf("-") > 0 ? `'${propName}'` : propName;
   if (program.checkRequired) {
-    return `${resolvedPropName}${isRequired(propName, definition) ? "" : "?"}`;
+    return `'${resolvedPropName}'${isRequired(propName, definition) ? "" : "?"}`;
   }
-  return resolvedPropName;
+  return `'${resolvedPropName}'`;
 };
 
 const propertiesList = (definition: Object) => {
+  if (!definition) {
+    return {};
+  }
   if ("allOf" in definition) {
     return definition.allOf.map(propertiesList);
   }
