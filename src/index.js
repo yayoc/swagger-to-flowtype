@@ -113,8 +113,17 @@ const propertiesList = (definition: Object) => {
   if (!definition) {
     return {};
   }
-  if ("allOf" in definition) {
-    return definition.allOf.map(propertiesList);
+
+  if ("allOf" in definition || "oneOf" in definition) {
+    let properties = [];
+    if ("allOf" in definition) {
+      properties = properties.concat(definition.allOf.map(propertiesList));
+    }
+    if ("oneOf" in definition) {
+      // We just add the "oneOf" also - they will be optional
+      properties = properties.concat(definition.oneOf.map(propertiesList));
+    }
+    return properties;
   }
 
   if (definition.$ref) {
