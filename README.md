@@ -26,6 +26,12 @@ You can also specify an output path with `-d option`.
 
 `$openapi-to-flowtype <YOUR SWAGGER FILE PATH OR URL> -d <OUTPUT FILE PATH>`
 
+*`Generate types for operation titled responses as well`*
+
+You can enable type generation for operation responses (if the have schema title specified) with `--responses`.
+
+`$openapi-to-flowtype <YOUR SWAGGER FILE PATH OR URL> --responses`
+
 *`Specify a suffix for generated types`*
 
 You can specify a suffix for all generated types with `--suffix <suffix>`.

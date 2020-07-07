@@ -20,6 +20,7 @@ export const generator = ( specification : Object, file : string ) => {
   const generator : Generator = new Generator();
   generator.exact = program.exact || generator.exact;
   generator.lowerCamelCase = program.lowerCamelCase || generator.lowerCamelCase;
+  generator.responses = program.responses || generator.responses;
   generator.suffix = program.suffix || generator.suffix;
 
   const result : string = generator.generate( specification );

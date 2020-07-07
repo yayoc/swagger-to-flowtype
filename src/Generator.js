@@ -34,6 +34,7 @@ export default class Generator {
 
   exact : boolean = false;
   lowerCamelCase : boolean = false;
+  responses : boolean = false;
   suffix : string = '';
 
   definitionTypeName( ref : string ) {
@@ -50,27 +51,39 @@ export default class Generator {
   }
 
   generateImpl( specification : any ) : string {
-    if ( !specification.components || !specification.components.schemas ) {
-      throw new Error( 'There is no definition in file, is it really OpenAPI 3.x?' );
+    const toProcess : Map< string, any > = new Map();
+    for ( const [key, schema] of Object.entries( ((specification || {}).components || {}).schemas || {} )) {
+      toProcess.set(key, schema);
     }
-    const defs : any = specification.components.schemas;
 
-    const g = Object.keys( defs )
-      .reduce( ( acc : Object[], definitionName : string ) => {
-        const arr = acc.concat( {
-          title: stripBrackets( definitionName ),
-          properties: this.propertiesList( defs[ definitionName ] ),
-        } );
-        return arr;
-      }, [] )
-      .map( definition => {
-        const s = `export type ${definition.title}${this.suffix} = ${this.propertiesTemplate(
-          definition.properties
-        ).replace( /"/g, '' )};`;
-        return s;
-      } )
-      .join( '\n' );
-    return g;
+    if ( this.responses ) {
+      for ( const byPath of Object.values(specification.paths || {}) ) {
+        for ( const byMethod of Object.values(byPath) ) {
+          for ( const byReturnCode of Object.values( byMethod.responses || {}) ) {
+            for ( const byMime of Object.values( byReturnCode.content || {}) ) {
+              const {schema} = byMime;
+              if (!schema) continue;
+              if (!schema.title) continue;
+              toProcess.set(schema.title, schema);
+            }
+          }
+        }
+      }
+    }
+
+    if ( toProcess.size === 0 ) {
+      throw new Error( 'There is no definitions in file, is it really OpenAPI 3.x?' );
+    }
+
+    const result : string[] = [];
+    for ( const [ definitionName, def ] of toProcess ) {
+      const typeDefinition : string = `export type ${stripBrackets( definitionName )}${this.suffix} = ${this.propertiesTemplate(
+        this.propertiesList( def )
+      ).replace( /"/g, '' )};`;
+      result.push( typeDefinition );
+    }
+
+    return result.join("\n");
   }
 
   propertiesList( definition : any ) {
