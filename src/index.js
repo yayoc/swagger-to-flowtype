@@ -43,7 +43,7 @@ const typeFor = (property: any): string => {
         )
         .join(" | ")}>`;
     } else if ("$ref" in property.items) {
-      return `Array<${definitionTypeName(property.items.$ref)}>`;
+      return `Array<${program.prefix}${definitionTypeName(property.items.$ref)}${program.suffix}>`;
     } else if (property.items.type === "object") {
       const child = propertiesTemplate(propertiesList(property.items)).replace(
         /"/g,
@@ -73,7 +73,7 @@ const typeFor = (property: any): string => {
   } else if (property.type === "object") {
     return propertiesTemplate(propertiesList(property)).replace(/"/g, "");
   }
-  return typeMapping[property.type] || definitionTypeName(property.$ref);
+  return typeMapping[property.type] || `${program.prefix}${definitionTypeName(property.$ref)}${program.suffix}`;
 };
 
 const isRequired = (propertyName: string, definition: Object): boolean => {
@@ -184,7 +184,7 @@ const generate = (swagger: Object): string => {
       return arr;
     }, [])
     .map(definition => {
-      const s = `export type ${definition.title} = ${propertiesTemplate(
+      const s = `export type ${program.prefix}${definition.title}${program.suffix} = ${propertiesTemplate(
         definition.properties
       ).replace(/"/g, "")};`;
       return s;
@@ -256,6 +256,8 @@ program
   .option("-cr --check-required", "Add question mark to optional properties")
   .option("-e --exact", "Add exact types")
   .option("-l --lower-camel-case", "Transform property keys to lower camel case")
+  .option("-p --prefix <prefix>", "Add prefix to type name e.g IUser instead of User", "")
+  .option("-s --suffix <suffix>", "Add suffix to type name e.g UserInterface instead of User", "")
   .action(async file => {
     try {
       const content = await getContent(file);
