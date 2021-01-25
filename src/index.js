@@ -6,6 +6,7 @@ import yaml from "js-yaml";
 import fs from "fs";
 import path from "path";
 import axios from "axios";
+import camelize from "camelize";
 
 // Swagger data types are base on types supported by the JSON-Scheme Draft4.
 const typeMapping = {
@@ -101,8 +102,11 @@ const propertyKeyForDefinition = (
   propName: string,
   definition: Object
 ): string => {
-  const resolvedPropName =
+  let resolvedPropName =
     propName.indexOf("-") > 0 ? `'${propName}'` : propName;
+  if (program.lowerCamelCase) {
+    resolvedPropName = camelize(resolvedPropName);
+  }
   if (program.checkRequired) {
     return `'${resolvedPropName}'${isRequired(propName, definition) ? "" : "?"}`;
   }
@@ -281,6 +285,7 @@ program
   .option("-d --destination <destination>", "Destination path")
   .option("-cr --check-required", "Add question mark to optional properties")
   .option("-e --exact", "Add exact types")
+  .option("-l --lower-camel-case", "Transform property keys to lower camel case")
   .action(async file => {
     try {
       const content = await getContent(file);

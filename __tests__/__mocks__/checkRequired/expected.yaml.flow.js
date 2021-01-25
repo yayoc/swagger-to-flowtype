@@ -22,6 +22,7 @@ export type Tag = { id?: number, name?: string };
 export type Pet = {
   id?: number,
   "x-dashes-id"?: string,
+  snake_case_id?: string,
   category?: Category,
   name: string,
   photoUrls: Array<string>,
