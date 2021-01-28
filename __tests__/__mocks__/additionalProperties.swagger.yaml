@@ -1,0 +1,32 @@
+# examples are taken from https://swagger.io/docs/specification/data-models/dictionaries/
+definitions:
+  Simple:
+    type: object
+    additionalProperties:
+      type: string
+  Complex:
+    type: object
+    required: [ name ]
+    properties:
+      name:
+        type: string
+    additionalProperties:
+      type: object
+      properties:
+        code:
+          type: integer
+        text:
+          type: string
+  Messages:
+    type: object
+    additionalProperties:
+      $ref: '#/definitions/Message'
+  Message:
+    type: object
+    required: [ code, text ]
+    properties:
+      code:
+        type: integer
+      text:
+        type: string
+    additionalProperties: false

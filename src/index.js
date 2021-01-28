@@ -112,11 +112,16 @@ const propertiesList = (definition: Object) => {
     return typeFor(definition);
   }
 
+  let result = {};
+  if (definition.additionalProperties) {
+    result["[string]"] = typeFor(definition.additionalProperties);
+  }
+
   if (
     !definition.properties ||
     Object.keys(definition.properties).length === 0
   ) {
-    return {};
+    return result;
   }
   return Object.assign.apply(
     null,
@@ -130,7 +135,7 @@ const propertiesList = (definition: Object) => {
         });
         return arr;
       },
-      [{}]
+      [result]
     )
   );
 };
