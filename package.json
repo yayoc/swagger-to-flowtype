@@ -32,7 +32,7 @@
     "swagger-to-flowtype": "./dist/index.js"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "camelize": "^1.0.0",
     "commander": "^2.9.0",
     "js-yaml": "^3.8.4",
